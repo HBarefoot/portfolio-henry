@@ -176,11 +176,9 @@ function ProjectCard({
 
   if (link) {
     return (
-      <div ref={ref}>
-        <a href={link} target="_blank" rel="noopener noreferrer" className={base}>
-          {inner}
-        </a>
-      </div>
+      <a ref={ref as any} href={link} target="_blank" rel="noopener noreferrer" className={base}>
+        {inner}
+      </a>
     );
   }
 
