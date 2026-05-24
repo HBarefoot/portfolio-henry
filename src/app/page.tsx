@@ -255,7 +255,7 @@ function Projects() {
             title="Yacht Transport Platform"
             description="Full-stack logistics platform for global yacht transport. Built over 8 months: vessel tracking, route optimization, broker integrations, and automated quoting."
             tags={["TypeScript", "Next.js", "Bun", "PostgreSQL", "IoT"]}
-            link="https://github.com/yachttransport/Yacht-Transport-Ai-v2"
+            link="https://yachttransport.ai"
             status="live"
           />
           <ProjectCard
