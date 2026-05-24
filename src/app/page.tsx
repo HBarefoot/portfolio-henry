@@ -254,34 +254,37 @@ function Projects() {
         <div className="grid gap-4 sm:grid-cols-2">
           <ProjectCard
             title="Frutero"
-            description="Raspberry Pi controller for mushroom fruiting chambers. Fleet management, real-time monitoring, and cloud orchestration for multi-chamber operations."
-            tags={["TypeScript", "Node.js", "Raspberry Pi", "IoT", "SQLite"]}
-            link="https://frutero.dev"
+            description="Self-hosted Raspberry Pi appliance for monotub mushroom fruiting chamber automation. WiFi provisioning, sensor telemetry, relay control, and optional multi-chamber fleet management via cloud."
+            tags={["TypeScript", "Bun", "Raspberry Pi", "SQLite", "IoT"]}
+            link="https://github.com/HBarefoot/frutero"
             status="live"
           />
           <ProjectCard
-            title="Multi-Broker Trading Platform"
-            description="Strategy creation via natural language, converted to PineScript. Multi-broker execution with risk management and backtesting pipeline."
-            tags={["TypeScript", "Next.js", "SQLite FTS5", "PineScript", "MCP"]}
-            status="dev"
-          />
-          <ProjectCard
-            title="Hermes Agent"
-            description="AI-native task execution layer. Cron-orchestrated, multi-tool agent system with persistent memory and gateway integrations."
-            tags={["Python", "Anthropic API", "SQLite", "MCP", "Slack"]}
+            title="Paw"
+            description="Personal AI assistant framework built with TypeScript and Bun. Multi-provider LLM routing, tool execution, and persistent memory with zero cloud dependencies."
+            tags={["TypeScript", "Bun", "SQLite", "MCP", "Anthropic"]}
+            link="https://github.com/HBarefoot/paw"
             status="open-source"
           />
           <ProjectCard
-            title="Strapi CMS + Postiz Pipeline"
-            description="Blog-to-social auto-posting. Strapi lifecycle hooks trigger Postiz API for cross-platform publishing with zero manual steps."
-            tags={["Strapi", "Postiz", "Railway", "PostgreSQL", "Node.js"]}
-            status="live"
+            title="Engram"
+            description="Persistent memory layer for AI agents. SQLite-based state with local embeddings, zero cloud dependencies, and MCP-native integration with Claude Desktop, Cursor, and Windsurf."
+            tags={["TypeScript", "SQLite", "MCP", "Embeddings", "Local-First"]}
+            link="https://github.com/HBarefoot/engram"
+            status="open-source"
           />
           <ProjectCard
-            title="Postiz Social Automation"
-            description="Self-hosted social media scheduler with social account OAuth, cron-driven posting, and API v1 integration for Instagram, Facebook, and more."
-            tags={["Node.js", "PostgreSQL", "OAuth", "Railway", "Cloudflare"]}
-            link="https://sm.henrybarefoot.com"
+            title="AI Trading Bot"
+            description="Crypto and forex trading bot with advanced technical analysis, machine learning signal generation, and TradingView-style charts. Multi-broker execution with PineScript strategy engine."
+            tags={["TypeScript", "Node.js", "PineScript", "ML", "PostgreSQL"]}
+            link="https://github.com/HBarefoot/ai-trading-bot"
+            status="dev"
+          />
+          <ProjectCard
+            title="Performance Service"
+            description="SpeedPage tool service. Page speed analysis and performance monitoring with actionable insights."
+            tags={["TypeScript", "Node.js", "Web Performance"]}
+            link="https://github.com/HBarefoot/performance-service"
             status="live"
           />
         </div>
