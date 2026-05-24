@@ -255,6 +255,7 @@ function Projects() {
             title="Yacht Transport Platform"
             description="Full-stack logistics platform for global yacht transport. Built over 8 months: vessel tracking, route optimization, broker integrations, and automated quoting."
             tags={["TypeScript", "Next.js", "Bun", "PostgreSQL", "IoT"]}
+            link="https://github.com/yachttransport/Yacht-Transport-Ai-v2"
             status="live"
           />
           <ProjectCard
@@ -268,7 +269,7 @@ function Projects() {
             title="Frutero Landing"
             description="Marketing site for Frutero — open-source mushroom farm controller. Product positioning, feature showcase, and call-to-action flows."
             tags={["HTML", "CSS", "Product Marketing"]}
-            link="https://github.com/HBarefoot/frutero-landing"
+            link="https://frutero-landing.vercel.app/"
             status="live"
           />
           <ProjectCard
