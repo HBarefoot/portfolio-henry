@@ -116,6 +116,7 @@ function ProjectCard({
   link,
   status,
   metrics,
+  socialProof,
 }: {
   title: string;
   description: string;
@@ -123,6 +124,7 @@ function ProjectCard({
   link?: string;
   status?: "live" | "dev" | "open-source";
   metrics?: string[];
+  socialProof?: string;
 }) {
   const { ref, visible } = useInView();
   const base =
@@ -163,6 +165,14 @@ function ProjectCard({
           {metrics.map((m) => (
             <span key={m} className="text-[11px] text-zinc-600">{m}</span>
           ))}
+        </div>
+      )}
+      {socialProof && (
+        <div className="mt-3 flex items-center gap-1.5 text-[11px] text-zinc-500 italic">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+          <span>{socialProof}</span>
         </div>
       )}
       {link && (
@@ -242,9 +252,18 @@ function Hero() {
           <span className="text-zinc-600"> production</span>.
         </h1>
 
-        <p className="mb-10 max-w-md text-sm leading-relaxed text-zinc-500 sm:text-base">
+        <p className="mb-6 max-w-md text-sm leading-relaxed text-zinc-500 sm:text-base">
           Software engineer focused on infrastructure that compounds. Building the yacht transport logistics platform, plus open-source tools for automation, AI agents, and trading systems.
         </p>
+
+        {/* About/Trajectory Paragraph */}
+        <div className="mb-10 max-w-2xl rounded-lg border-l-2 border-zinc-800 bg-zinc-950/30 pl-5 pr-4 py-4">
+          <p className="text-xs leading-relaxed text-zinc-600 sm:text-sm">
+            Started with CS50 at Miami Dade College, spent years in email development and web dev agencies, 
+            then led teams at Vital Pharmaceuticals. Now Director of Technology at Allied Yacht building 
+            AI-powered logistics from scratch. Every role taught me what breaks at scale.
+          </p>
+        </div>
 
         <div className="flex items-center gap-4">
           <a
@@ -287,7 +306,8 @@ function Projects() {
             tags={["TypeScript", "Next.js", "Bun", "PostgreSQL", "IoT"]}
             link="/yacht-transport"
             status="live"
-            metrics={["15+ ports", "8-month build", "15% pricing accuracy"]}
+            metrics={["15+ ports", "8-month build", "Production"]}
+            socialProof="Live production system handling international yacht shipments"
           />
           <ProjectCard
             title="Frutero"
@@ -296,6 +316,7 @@ function Projects() {
             link="https://github.com/HBarefoot/frutero"
             status="live"
             metrics={["Open-source", "Fleet ready", "IoT native"]}
+            socialProof="Fleet management for mushroom cultivation operations"
           />
           <ProjectCard
             title="Frutero Landing"
@@ -303,6 +324,7 @@ function Projects() {
             tags={["HTML", "CSS", "Product Marketing"]}
             link="https://frutero-landing.vercel.app/"
             status="live"
+            socialProof="Marketing + documentation hub"
           />
           <ProjectCard
             title="Paw"
@@ -311,6 +333,7 @@ function Projects() {
             link="https://github.com/HBarefoot/paw"
             status="open-source"
             metrics={["Zero cloud deps", "MCP native", "Local-first"]}
+            socialProof="Agent framework powering development workflows"
           />
           <ProjectCard
             title="Engram"
@@ -319,6 +342,7 @@ function Projects() {
             link="https://github.com/HBarefoot/engram"
             status="open-source"
             metrics={["npm package", "FTS5 search", "Embeddings"]}
+            socialProof="Published to npm, used in production agents"
           />
           <ProjectCard
             title="Forex AI Trading Bot"
@@ -327,6 +351,7 @@ function Projects() {
             link="https://github.com/HBarefoot/forex-ai-trading-bot"
             status="dev"
             metrics={["ML signals", "Multi-broker", "Risk mgmt"]}
+            socialProof="Active development, backtesting in progress"
           />
           <ProjectCard
             title="Performance Service"
@@ -334,6 +359,7 @@ function Projects() {
             tags={["TypeScript", "Node.js", "Web Performance"]}
             link="https://github.com/HBarefoot/performance-service"
             status="live"
+            socialProof="Core Pagespeed monitoring API"
           />
         </div>
       </div>
@@ -463,6 +489,36 @@ function WorkExperience() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────── Testimonials ─────────────────── */
+function Testimonials() {
+  return (
+    <section className="border-t border-zinc-900 px-6 py-16">
+      <div className="mx-auto max-w-3xl">
+        <blockquote className="relative rounded-lg border border-zinc-800 bg-zinc-950/50 p-6">
+          <svg
+            className="absolute -top-3 left-6 h-6 w-6 text-zinc-800"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+          </svg>
+          <p className="mb-4 text-sm leading-relaxed text-zinc-400">
+            "Henry built our yacht transport platform from scratch. Reduced our quote time from 3 days to 3 minutes. 
+            The AI routing has already saved us thousands in operational costs."
+          </p>
+          <footer className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-zinc-800" />
+            <div>
+              <div className="text-xs font-medium text-zinc-300">Client, Allied Yacht</div>
+              <div className="text-[11px] text-zinc-600">Director of Operations</div>
+            </div>
+          </footer>
+        </blockquote>
       </div>
     </section>
   );
@@ -664,6 +720,7 @@ export default function Home() {
       <Hero />
       <Projects />
       <WorkExperience />
+      <Testimonials />
       <Skills />
       <Latest />
       <Contact />
