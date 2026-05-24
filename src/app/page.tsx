@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 /* ─────────────────── Helpers ─────────────────── */
@@ -91,6 +91,23 @@ function Flame() {
   );
 }
 
+/* ─────────────────── Scroll Animations Hook ─────────────────── */
+function useInView(threshold = 0.1) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
 /* ─────────────────── Project Card ─────────────────── */
 function ProjectCard({
   title,
@@ -98,15 +115,19 @@ function ProjectCard({
   tags,
   link,
   status,
+  metrics,
 }: {
   title: string;
   description: string;
   tags: string[];
   link?: string;
   status?: "live" | "dev" | "open-source";
+  metrics?: string[];
 }) {
+  const { ref, visible } = useInView();
   const base =
-    "group relative rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900";
+    "group relative rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900 " +
+    (visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4");
 
   const inner = (
     <>
@@ -137,6 +158,13 @@ function ProjectCard({
           </span>
         ))}
       </div>
+      {metrics && metrics.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1">
+          {metrics.map((m) => (
+            <span key={m} className="text-[11px] text-zinc-600">{m}</span>
+          ))}
+        </div>
+      )}
       {link && (
         <div className="mt-4 flex items-center gap-1 text-xs text-zinc-600 transition-colors group-hover:text-zinc-400">
           <span>View project</span>
@@ -148,13 +176,15 @@ function ProjectCard({
 
   if (link) {
     return (
-      <a href={link} target="_blank" rel="noopener noreferrer" className={base}>
-        {inner}
-      </a>
+      <div ref={ref}>
+        <a href={link} target="_blank" rel="noopener noreferrer" className={base}>
+          {inner}
+        </a>
+      </div>
     );
   }
 
-  return <div className={base}>{inner}</div>;
+  return <div ref={ref} className={base}>{inner}</div>;
 }
 
 /* ─────────────────── Skill Pill ─────────────────── */
@@ -171,6 +201,7 @@ function Nav() {
   const items = [
     { href: "#projects", label: "Projects" },
     { href: "#skills", label: "Skills" },
+    { href: "#latest", label: "Latest" },
     { href: "#contact", label: "Contact" },
   ];
 
@@ -250,13 +281,14 @@ function Projects() {
           <h2 className="text-2xl font-medium tracking-tight text-zinc-100">Projects</h2>
         </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <ProjectCard
             title="Yacht Transport Platform"
             description="Full-stack logistics platform for global yacht transport. Built over 8 months: vessel tracking, route optimization, broker integrations, and automated quoting."
             tags={["TypeScript", "Next.js", "Bun", "PostgreSQL", "IoT"]}
-            link="https://yachttransport.ai"
+            link="/yacht-transport"
             status="live"
+            metrics={["15+ ports", "8-month build", "15% pricing accuracy"]}
           />
           <ProjectCard
             title="Frutero"
@@ -264,6 +296,7 @@ function Projects() {
             tags={["TypeScript", "Bun", "Raspberry Pi", "SQLite", "IoT"]}
             link="https://github.com/HBarefoot/frutero"
             status="live"
+            metrics={["Open-source", "Fleet ready", "IoT native"]}
           />
           <ProjectCard
             title="Frutero Landing"
@@ -278,6 +311,7 @@ function Projects() {
             tags={["TypeScript", "Bun", "SQLite", "MCP", "Anthropic"]}
             link="https://github.com/HBarefoot/paw"
             status="open-source"
+            metrics={["Zero cloud deps", "MCP native", "Local-first"]}
           />
           <ProjectCard
             title="Engram"
@@ -285,6 +319,7 @@ function Projects() {
             tags={["TypeScript", "SQLite", "MCP", "Embeddings", "Local-First"]}
             link="https://github.com/HBarefoot/engram"
             status="open-source"
+            metrics={["npm package", "FTS5 search", "Embeddings"]}
           />
           <ProjectCard
             title="Forex AI Trading Bot"
@@ -292,6 +327,7 @@ function Projects() {
             tags={["Python", "TensorFlow", "PineScript", "APIs", "PostgreSQL"]}
             link="https://github.com/HBarefoot/forex-ai-trading-bot"
             status="dev"
+            metrics={["ML signals", "Multi-broker", "Risk mgmt"]}
           />
           <ProjectCard
             title="Performance Service"
@@ -444,6 +480,56 @@ function Footer() {
   );
 }
 
+/* ─────────────────── Latest ─────────────────── */
+function Latest() {
+  return (
+    <section id="latest" className="border-t border-zinc-900 px-6 py-24">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-12">
+          <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-zinc-600">Recent</span>
+          <h2 className="text-2xl font-medium tracking-tight text-zinc-100">Latest</h2>
+        </div>
+
+        <div className="space-y-4">
+          <a
+            href="/yacht-transport"
+            className="group block rounded-lg border border-zinc-800 bg-zinc-950 p-5 transition-all hover:border-zinc-700"
+          >
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-xs text-zinc-500">Portfolio · Case Study</span>
+              <span className="text-xs text-zinc-600">May 2025</span>
+            </div>
+            <h3 className="mb-1 text-sm font-medium text-zinc-200 transition-colors group-hover:text-zinc-100">
+              Building the Yacht Transport Platform — Architecture, Tradeoffs, Outcomes
+            </h3>
+            <p className="text-xs leading-relaxed text-zinc-600">
+              A deep dive into the logistics platform I built over 8 months: broker integrations, pricing engine, route optimization, and real-world results.
+            </p>
+          </a>
+
+          <a
+            href="https://github.com/HBarefoot/engram"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block rounded-lg border border-zinc-800 bg-zinc-950 p-5 transition-all hover:border-zinc-700"
+          >
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-xs text-zinc-500">Open Source</span>
+              <span className="text-xs text-zinc-600">Mar 2025</span>
+            </div>
+            <h3 className="mb-1 text-sm font-medium text-zinc-200 transition-colors group-hover:text-zinc-100">
+              Engram — Persistent Memory for AI Agents
+            </h3>
+            <p className="text-xs leading-relaxed text-zinc-600">
+              SQLite-based memory layer with local embeddings, zero cloud dependencies, and MCP-native integration. Published to npm.
+            </p>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─────────────────── Page ─────────────────── */
 export default function Home() {
   return (
@@ -452,6 +538,9 @@ export default function Home() {
       <Hero />
       <Projects />
       <Skills />
+      <Latest />
+      <Contact />
+      <Footer />
     </Fragment>
   );
 }
