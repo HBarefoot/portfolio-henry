@@ -198,6 +198,7 @@ function SkillPill({ label }: { label: string }) {
 function Nav() {
   const items = [
     { href: "#projects", label: "Projects" },
+    { href: "#experience", label: "Experience" },
     { href: "#skills", label: "Skills" },
     { href: "#latest", label: "Latest" },
     { href: "#contact", label: "Contact" },
@@ -334,6 +335,133 @@ function Projects() {
             link="https://github.com/HBarefoot/performance-service"
             status="live"
           />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────── Work Experience ─────────────────── */
+function WorkExperience() {
+  const experiences = [
+    {
+      company: "Allied Yacht",
+      role: "Director of Technology",
+      period: "2025 — Present",
+      location: "Remote / Global",
+      description: "Led end-to-end architecture of AI-powered yacht transport platform, reducing quote processing from days to minutes.",
+      highlights: [
+        "Architected pricing/routing engines across 15+ international ports",
+        "Established modern stack: Next.js, TypeScript, Tailwind, secure RESTful APIs",
+        "Built robust admin dashboard with role-based access controls"
+      ],
+      tags: ["Next.js", "TypeScript", "AI/LLM", "PostgreSQL"],
+    },
+    {
+      company: "Addigy",
+      role: "Web Developer",
+      period: "2023 — 2025",
+      location: "Miami, FL",
+      description: "Built scalable WordPress solutions and data dashboards for IT management platform.",
+      highlights: [
+        "Developed custom plugins and reusable components for marketing sites",
+        "Built data dashboards in Looker Studio integrated with BigQuery",
+        "Integrated third-party tools and APIs for lead capture automation"
+      ],
+      tags: ["WordPress", "PHP", "Looker Studio", "BigQuery"],
+    },
+    {
+      company: "Vital Pharmaceuticals",
+      role: "Sr. Web Developer",
+      period: "2020 — 2023",
+      location: "Miami, FL",
+      description: "Led development team and delivered marketing solutions for fast-paced supplement industry.",
+      highlights: [
+        "Managed workflows through task delegation and ticket creation",
+        "Built landing pages using PHP, Node.js, WordPress, and React",
+        "Supported cross-functional teams and developer onboarding"
+      ],
+      tags: ["React", "Node.js", "PHP", "WordPress"],
+    },
+    {
+      company: "AARP",
+      role: "Email Developer",
+      period: "2022 — 2022",
+      location: "Remote",
+      description: "Developed email systems and automation workflows in Salesforce Marketing Cloud.",
+      highlights: [
+        "Designed custom email templates within Salesforce Marketing Cloud",
+        "Set up automation workflows and performance metrics",
+        "Ensured cross-client compatibility across major email platforms"
+      ],
+      tags: ["Salesforce", "HTML Email", "Automation"],
+    },
+    {
+      company: "Crystal Cruises",
+      role: "Email Developer",
+      period: "2018 — 2020",
+      location: "Miami, FL",
+      description: "Built automation tools and email systems for luxury cruise line.",
+      highlights: [
+        "Built Node.js tool with Cheerio/MongoDB to automate HTML content creation",
+        "Coded responsive HTML emails optimized for all major clients",
+        "Collaborated with deployment and QA teams on weekly releases"
+      ],
+      tags: ["Node.js", "MongoDB", "Cheerio", "Salesforce"],
+    },
+  ];
+
+  return (
+    <section id="experience" className="border-t border-zinc-900 px-6 py-24">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-12">
+          <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-zinc-600">Career</span>
+          <h2 className="text-2xl font-medium tracking-tight text-zinc-100">Work Experience</h2>
+        </div>
+
+        <div className="space-y-6">
+          {experiences.map((exp) => (
+            <div
+              key={exp.company}
+              className="group rounded-lg border border-zinc-800 bg-zinc-950/50 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50"
+            >
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-2 w-2 rounded-full bg-zinc-600 group-hover:bg-zinc-400" />
+                    <h3 className="text-sm font-medium text-zinc-200">{exp.company}</h3>
+                  </div>
+                  <p className="mt-1 text-xs text-zinc-500">{exp.role}</p>
+                </div>
+                <div className="text-left sm:text-right">
+                  <span className="text-xs text-zinc-600">{exp.period}</span>
+                  <p className="text-[11px] text-zinc-700">{exp.location}</p>
+                </div>
+              </div>
+
+              <p className="mb-4 text-sm leading-relaxed text-zinc-500">{exp.description}</p>
+
+              <ul className="mb-4 space-y-1.5">
+                {exp.highlights.map((highlight, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs text-zinc-600">
+                    <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-700" />
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-wrap gap-2">
+                {exp.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-0.5 text-[11px] text-zinc-500"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -535,6 +663,7 @@ export default function Home() {
       <Nav />
       <Hero />
       <Projects />
+      <WorkExperience />
       <Skills />
       <Latest />
       <Contact />
