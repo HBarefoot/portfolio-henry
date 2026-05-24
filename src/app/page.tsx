@@ -213,8 +213,7 @@ function Hero() {
         </h1>
 
         <p className="mb-10 max-w-md text-sm leading-relaxed text-zinc-500 sm:text-base">
-          Software engineer focused on infrastructure that compounds. Platforms, pipelines, and the
-          decisions that make or break them.
+          Software engineer focused on infrastructure that compounds. Building the yacht transport logistics platform, plus open-source tools for automation, AI agents, and trading systems.
         </p>
 
         <div className="flex items-center gap-4">
@@ -251,12 +250,25 @@ function Projects() {
           <h2 className="text-2xl font-medium tracking-tight text-zinc-100">Projects</h2>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
+          <ProjectCard
+            title="Yacht Transport Platform"
+            description="Full-stack logistics platform for global yacht transport. Built over 8 months: vessel tracking, route optimization, broker integrations, and automated quoting."
+            tags={["TypeScript", "Next.js", "Bun", "PostgreSQL", "IoT"]}
+            status="live"
+          />
           <ProjectCard
             title="Frutero"
             description="Self-hosted Raspberry Pi appliance for monotub mushroom fruiting chamber automation. WiFi provisioning, sensor telemetry, relay control, and optional multi-chamber fleet management via cloud."
             tags={["TypeScript", "Bun", "Raspberry Pi", "SQLite", "IoT"]}
             link="https://github.com/HBarefoot/frutero"
+            status="live"
+          />
+          <ProjectCard
+            title="Frutero Landing"
+            description="Marketing site for Frutero — open-source mushroom farm controller. Product positioning, feature showcase, and call-to-action flows."
+            tags={["HTML", "CSS", "Product Marketing"]}
+            link="https://github.com/HBarefoot/frutero-landing"
             status="live"
           />
           <ProjectCard
@@ -274,10 +286,10 @@ function Projects() {
             status="open-source"
           />
           <ProjectCard
-            title="AI Trading Bot"
-            description="Crypto and forex trading bot with advanced technical analysis, machine learning signal generation, and TradingView-style charts. Multi-broker execution with PineScript strategy engine."
-            tags={["TypeScript", "Node.js", "PineScript", "ML", "PostgreSQL"]}
-            link="https://github.com/HBarefoot/ai-trading-bot"
+            title="Forex AI Trading Bot"
+            description="Forex and crypto trading bot with advanced technical analysis, machine learning signal generation, and TradingView-style charts. Multi-broker execution with risk management."
+            tags={["Python", "TensorFlow", "PineScript", "APIs", "PostgreSQL"]}
+            link="https://github.com/HBarefoot/forex-ai-trading-bot"
             status="dev"
           />
           <ProjectCard
