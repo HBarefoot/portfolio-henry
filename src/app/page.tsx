@@ -260,23 +260,27 @@ function Nav() {
       </div>
 
       {/* Mobile menu dropdown */}
-      {open && (
-        <div className="sm:hidden border-t border-zinc-900/50 bg-zinc-950/95 backdrop-blur-md">
-          <div className="mx-auto max-w-3xl px-6 py-4 flex flex-col gap-4">
-            {items.map((i) => (
-              <a
-                key={i.href}
-                href={i.href}
-                onClick={() => setOpen(false)}
-                className="text-sm text-zinc-400 transition-colors hover:text-zinc-100"
-              >
-                {i.label}
-              </a>
-            ))}
-            <ExternalLink href="https://github.com/hbarefoot">GitHub</ExternalLink>
-          </div>
+      <div
+        className={`sm:hidden border-t border-zinc-900/50 bg-zinc-950/95 backdrop-blur-md transition-all duration-200 ease-out ${
+          open
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 -translate-y-2 pointer-events-none absolute"
+        }`}
+      >
+        <div className="mx-auto max-w-3xl px-6 py-4 flex flex-col gap-4">
+          {items.map((i) => (
+            <a
+              key={i.href}
+              href={i.href}
+              onClick={() => setOpen(false)}
+              className="text-sm text-zinc-400 transition-colors hover:text-zinc-100"
+            >
+              {i.label}
+            </a>
+          ))}
+          <ExternalLink href="https://github.com/hbarefoot">GitHub</ExternalLink>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
