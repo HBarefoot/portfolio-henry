@@ -206,6 +206,7 @@ function SkillPill({ label }: { label: string }) {
 
 /* ─────────────────── Nav ─────────────────── */
 function Nav() {
+  const [open, setOpen] = useState(false);
   const items = [
     { href: "#projects", label: "Projects" },
     { href: "#experience", label: "Experience" },
@@ -220,7 +221,9 @@ function Nav() {
         <Link href="/" className="text-sm font-medium text-zinc-100">
           hb.
         </Link>
-        <div className="flex items-center gap-6">
+
+        {/* Desktop nav */}
+        <div className="hidden sm:flex items-center gap-6">
           {items.map((i) => (
             <a
               key={i.href}
@@ -232,7 +235,48 @@ function Nav() {
           ))}
           <ExternalLink href="https://github.com/hbarefoot">GitHub</ExternalLink>
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="sm:hidden p-1 text-zinc-400 transition-colors hover:text-zinc-100"
+          aria-label="Toggle menu"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {open ? (
+              <>
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </>
+            ) : (
+              <>
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </>
+            )}
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile menu dropdown */}
+      {open && (
+        <div className="sm:hidden border-t border-zinc-900/50 bg-zinc-950/95 backdrop-blur-md">
+          <div className="mx-auto max-w-3xl px-6 py-4 flex flex-col gap-4">
+            {items.map((i) => (
+              <a
+                key={i.href}
+                href={i.href}
+                onClick={() => setOpen(false)}
+                className="text-sm text-zinc-400 transition-colors hover:text-zinc-100"
+              >
+                {i.label}
+              </a>
+            ))}
+            <ExternalLink href="https://github.com/hbarefoot">GitHub</ExternalLink>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
