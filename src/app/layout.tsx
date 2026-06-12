@@ -9,6 +9,7 @@ const geist = Geist({
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://henrybarefoot.com";
+const OG_IMAGE = "/og.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -40,12 +41,21 @@ export const metadata: Metadata = {
     title: "Henry Barefoot — Senior Full-Stack Engineer · Next.js · Node.js · AI Infra",
     description:
       "Production AI infrastructure and the systems that ship it. Allied Yacht Transport: $500K+ saved. Engram MCP: 95% pipeline efficiency.",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Henry Barefoot — Senior Full-Stack Engineer. $500K+ saved on ops. 95% pipeline efficiency. Next.js, Node.js, AI infrastructure.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Henry Barefoot — Senior Full-Stack Engineer",
     description:
       "Production AI infrastructure. $500K+ saved on ops. 95% pipeline efficiency. Next.js · Node.js · MCP.",
+    images: [OG_IMAGE],
   },
   robots: {
     index: true,
