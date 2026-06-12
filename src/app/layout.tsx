@@ -7,9 +7,59 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://henrybarefoot.com";
+
 export const metadata: Metadata = {
-  title: "Henry Barefoot — Engineer",
-  description: "Building systems that survive contact with production.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Henry Barefoot — Senior Full-Stack Engineer · Next.js · Node.js · AI Infra",
+    template: "%s · Henry Barefoot",
+  },
+  description:
+    "Senior full-stack engineer. I build production AI infrastructure and the systems that ship it. Allied Yacht Transport: $500K+ saved on ops. Engram MCP: 95% pipeline efficiency. Days-to-minutes on lead scoring.",
+  keywords: [
+    "Henry Barefoot",
+    "Senior Full-Stack Engineer",
+    "Next.js",
+    "Node.js",
+    "TypeScript",
+    "AI Infrastructure",
+    "MCP",
+    "Engram",
+    "Barefoot Digital",
+    "Plantation FL",
+  ],
+  authors: [{ name: "Henry Barefoot", url: SITE_URL }],
+  creator: "Henry Barefoot",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "Henry Barefoot",
+    title: "Henry Barefoot — Senior Full-Stack Engineer · Next.js · Node.js · AI Infra",
+    description:
+      "Production AI infrastructure and the systems that ship it. Allied Yacht Transport: $500K+ saved. Engram MCP: 95% pipeline efficiency.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Henry Barefoot — Senior Full-Stack Engineer",
+    description:
+      "Production AI infrastructure. $500K+ saved on ops. 95% pipeline efficiency. Next.js · Node.js · MCP.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export default function RootLayout({
@@ -19,6 +69,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.variable} scroll-smooth antialiased`}>
+      <head>
+        {/* Plausible analytics — no-op until NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set */}
+        {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ? (
+          <script
+            defer
+            data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
+            src="https://plausible.io/js/script.js"
+          />
+        ) : null}
+      </head>
       <body className="min-h-full bg-zinc-950 text-zinc-300">{children}</body>
     </html>
   );
