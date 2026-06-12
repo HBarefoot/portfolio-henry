@@ -1,0 +1,4 @@
+// Static OG image placeholder. This file is a 1x1 transparent PNG.
+// The real 1200x630 branded image needs to be generated and committed
+// as public/og.png. Until then, social previews will show a blank
+// image (better than a 404 / broken card).
