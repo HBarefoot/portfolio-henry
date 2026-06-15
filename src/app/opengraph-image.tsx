@@ -76,6 +76,8 @@ export default async function Image() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 1000 }}>
           <div
             style={{
+              display: 'flex',
+              flexDirection: 'column',
               fontSize: 88,
               fontWeight: 700,
               lineHeight: 1.02,
@@ -89,6 +91,8 @@ export default async function Image() {
           </div>
           <div
             style={{
+              display: 'flex',
+              flexDirection: 'column',
               fontSize: 30,
               lineHeight: 1.3,
               color: '#A1A1AA',
