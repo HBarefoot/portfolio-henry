@@ -18,7 +18,9 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
 
     posthog.init(key, {
       api_host: host,
-      capture_pageview: false, // Next.js route changes are captured by the provider automatically
+      capture_pageview: false, // route changes are captured by PostHogPageView
+      capture_pageleave: true,
+      autocapture: true,
     });
   }, []);
 
