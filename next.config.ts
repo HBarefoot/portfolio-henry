@@ -4,8 +4,6 @@ const posthogHost =
   process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  distDir: "dist",
   images: {
     unoptimized: true,
   },
