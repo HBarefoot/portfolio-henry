@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import { PostHogProvider } from "./providers";
+import PostHogPageView from "./PostHogPageView";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -89,7 +91,12 @@ export default function RootLayout({
           />
         ) : null}
       </head>
-      <body className="min-h-full bg-zinc-950 text-zinc-300">{children}</body>
+      <body className="min-h-full bg-zinc-950 text-zinc-300">
+        <PostHogProvider>
+          <PostHogPageView />
+          {children}
+        </PostHogProvider>
+      </body>
     </html>
   );
 }
