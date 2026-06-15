@@ -1,450 +1,578 @@
-"use client";
-
-import { Fragment, useState, useEffect, useRef } from "react";
+import { Fragment } from "react";
 import Link from "next/link";
+import { RevealOnScroll } from "./components/RevealOnScroll";
 
-/* ─────────────────── Helpers ─────────────────── */
+/* ─────────────────── Inline Icons ─────────────────── */
 function ChevronDown(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
 }
 
-function ExternalLink({ href, children }: { href: string; children: React.ReactNode }) {
+function ExternalArrow() {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-zinc-400 underline-offset-4 transition-colors hover:text-zinc-100">
-      {children}
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 17L17 7" />
-        <path d="M7 7h10v10" />
-      </svg>
-    </a>
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 17L17 7" />
+      <path d="M7 7h10v10" />
+    </svg>
   );
 }
 
 function ArrowRight() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M5 12h14" />
       <path d="M12 5l7 7-7 7" />
     </svg>
   );
 }
 
-function Terminal() {
+function MailIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="2" width="20" height="20" rx="4" ry="4" />
-      <path d="M6 8l4 4-4 4" />
-      <line x1="12" y1="16" x2="18" y2="16" />
-    </svg>
-  );
-}
-
-function Database() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5v14a9 3 0 0 0 18 0V5" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-    </svg>
-  );
-}
-
-function Server() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
-      <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
-      <line x1="6" y1="6" x2="6.01" y2="6" />
-      <line x1="6" y1="18" x2="6.01" y2="18" />
-    </svg>
-  );
-}
-
-function Cloud() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.5 19A5.5 5.5 0 1 1 13.5 8h3a5 5 0 1 1 2.8 11" />
-    </svg>
-  );
-}
-
-function CodeIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="16 18 22 12 16 6" />
-      <polyline points="8 6 2 12 8 18" />
-    </svg>
-  );
-}
-
-function Flame() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9.5 14.5A5 5 0 0 1 15 12a5 5 0 0 1-3-4" />
-      <path d="M6.92 14.54c.41-.53.75-1.08.75-1.74C7.67 9.85 5.69 7.3 6.84 4.61" />
-      <path d="M7.5 19.81C5.11 18.42 3.5 16.16 3.5 13.5 3.5 10.5 5.5 9.5 7.5 7.5c2.5 2.5 5.5 2.5 8.5 0 2 2 4 3 4 6-.01 3.21-2.2 6.06-5 7" />
-    </svg>
-  );
-}
-
-/* ─────────────────── Scroll Animations Hook ─────────────────── */
-function useInView(threshold = 0.1) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return { ref, visible };
-}
-
-/* ─────────────────── Header ─────────────────── */
-function Header() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const links = [
-    { href: "#about", label: "About" },
-    { href: "#services", label: "Services" },
-    { href: "#projects", label: "Projects" },
-    { href: "#contact", label: "Contact" },
-  ];
-
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-zinc-950/80 backdrop-blur-md" : "bg-transparent"
-      }`}
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-sm font-semibold text-zinc-100">
-          Henry Barefoot
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 text-sm sm:flex">
-          {links.map((link) => (
-            <a key={link.href} href={link.href} className="text-zinc-400 transition-colors hover:text-zinc-100">
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileOpen((o) => !o)}
-          className="flex items-center justify-center p-2 text-zinc-300 sm:hidden"
-          aria-label="Toggle menu"
-        >
-          <div className="space-y-1.5">
-            <span className={`block h-0.5 w-5 rounded bg-current transition-transform ${mobileOpen ? "translate-y-2 rotate-45" : ""}`} />
-            <span className={`block h-0.5 w-5 rounded bg-current transition-opacity ${mobileOpen ? "opacity-0" : ""}`} />
-            <span className={`block h-0.5 w-5 rounded bg-current transition-transform ${mobileOpen ? "-translate-y-2 -rotate-45" : ""}`} />
-          </div>
-        </button>
-      </div>
-
-      {/* Mobile nav */}
-      {mobileOpen && (
-        <nav className="border-b border-zinc-900 bg-zinc-950 px-6 pb-4 sm:hidden">
-          <div className="flex flex-col gap-3 text-sm">
-            {links.map((link) => (
-              <a key={link.href} href={link.href} onClick={() => setMobileOpen(false)} className="text-zinc-400 transition-colors hover:text-zinc-100">
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </nav>
-      )}
-    </header>
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 7-10 6L2 7" />
+    </svg>
   );
 }
 
-/* ─────────────────── Hero ─────────────────── */
-function Hero() {
+function GitHubIcon() {
   return (
-    <section className="relative px-6 pb-12 pt-40 sm:pt-52">
-      <div className="mx-auto max-w-3xl">
-        <p className="mb-4 text-sm text-zinc-500">Engineer · Founder · Systems Builder</p>
-        <h1 className="mb-6 text-4xl font-bold leading-[1.1] tracking-tight text-zinc-100 sm:text-6xl">
-          I build systems that survive contact with production.
-        </h1>
-        <p className="max-w-xl text-lg text-zinc-400 sm:text-xl">
-          Full-stack engineering with a backend bias. Shipping reliable products across AI, logistics, fintech, and IoT.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-5 py-3 text-sm font-medium text-zinc-950 transition-colors hover:bg-white"
-          >
-            Start a project <ArrowRight />
-          </a>
-          <a
-            href="#projects"
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-800 px-5 py-3 text-sm font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:text-zinc-100"
-          >
-            View work
-          </a>
-        </div>
-      </div>
-    </section>
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.16c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.77.11 3.06.74.8 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.35.78 1.05.78 2.11v3.13c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z" />
+    </svg>
   );
 }
 
-/* ─────────────────── About ─────────────────── */
-function About() {
-  const { ref, visible } = useInView();
-
+function LinkedInIcon() {
   return (
-    <section id="about" ref={ref} className="px-6 py-24">
-      <div className="mx-auto max-w-3xl">
-        <h2 className="mb-8 text-2xl font-semibold text-zinc-100 sm:text-3xl">About</h2>
-        <div
-          className={`space-y-5 text-zinc-400 transition-all duration-700 ${
-            visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
-        >
-          <p>
-            I&apos;m Henry Barefoot, a software engineer who spends most of my time where product, infrastructure, and data
-            overlap. I&apos;ve shipped production systems in logistics, fintech, IoT, and AI infrastructure — usually as the
-            person turning ambiguity into working code.
-          </p>
-          <p>
-            My bias is toward backend engineering and infrastructure: resilient APIs, async processing, observability, and
-            integrations that don&apos;t fall over when a third party changes their schema. On the frontend I value speed,
-            clarity, and accessibility over trend-chasing.
-          </p>
-          <p>
-            I&apos;ve built systems that process millions of events, reduced deployment cycles from days to minutes, and
-            helped small teams operate like much larger ones. I care about maintainability, cost discipline, and the
-            boring magic of a system that just keeps working.
-          </p>
-          <p>Currently available for fractional CTO work, architecture consulting, and hands-on product engineering.</p>
-        </div>
-      </div>
-    </section>
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.28V1.72C24 .77 23.21 0 22.22 0Z" />
+    </svg>
   );
 }
 
-/* ─────────────────── Services ─────────────────── */
-function Services() {
-  const { ref, visible } = useInView();
-
-  const services = [
-    {
-      title: "Product engineering",
-      icon: <CodeIcon />,
-      description:
-        "End-to-end product builds in React/Next.js, Node.js, Python, and PostgreSQL. I focus on shipping fast without creating tomorrow's technical debt.",
-    },
-    {
-      title: "Backend & integrations",
-      icon: <Server />,
-      description:
-        "API design, webhook handling, event pipelines, and third-party integrations that handle retries, idempotency, and failure gracefully.",
-    },
-    {
-      title: "Cloud infrastructure",
-      icon: <Cloud />,
-      description:
-        "AWS, GCP, Vercel, Docker, and Kubernetes deployments with CI/CD, IaC, and observability baked in from day one.",
-    },
-    {
-      title: "Data & analytics",
-      icon: <Database />,
-      description:
-        "Data models, ETL pipelines, analytics instrumentation, and dashboards that actually answer business questions.",
-    },
-    {
-      title: "AI & automation",
-      icon: <Terminal />,
-      description:
-        "LLM-powered workflows, agents, and internal tools that automate real work instead of demoing well once.",
-    },
-    {
-      title: "Technical strategy",
-      icon: <Flame />,
-      description:
-        "Architecture reviews, build-vs-buy decisions, and engineering roadmaps for teams moving from prototype to scale.",
-    },
-  ];
-
+function DownloadIcon() {
   return (
-    <section id="services" ref={ref} className="px-6 py-24">
-      <div className="mx-auto max-w-3xl">
-        <h2 className="mb-10 text-2xl font-semibold text-zinc-100 sm:text-3xl">Services</h2>
-        <div
-          className={`grid gap-4 transition-all duration-700 ${
-            visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
-        >
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="group rounded-xl border border-zinc-900 bg-zinc-950/50 p-6 transition-colors hover:border-zinc-800"
-            >
-              <div className="mb-4 text-zinc-300">{service.icon}</div>
-              <h3 className="mb-2 text-lg font-medium text-zinc-100">{service.title}</h3>
-              <p className="text-sm leading-relaxed text-zinc-400">{service.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
   );
 }
 
-/* ─────────────────── Selected Projects ─────────────────── */
-function Projects() {
-  const { ref, visible } = useInView();
+/* ─────────────────── Data ─────────────────── */
+const STATS = [
+  { value: "$500K+", label: "saved on ops at Allied Yacht Transport" },
+  { value: "95%", label: "pipeline efficiency via Engram MCP" },
+  { value: "Days → minutes", label: "lead scoring with Hunter + n8n + Ollama" },
+  { value: "6 years", label: "shipping production systems solo and on teams" },
+];
 
-  const projects = [
-    {
-      name: "Engram",
-      role: "Founder / Engineer",
-      description:
-        "AI-powered knowledge infrastructure. Built LLM pipelines, embedding search, and a real-time collaborative workspace.",
-      tags: ["Next.js", "Node.js", "PostgreSQL", "OpenAI", "Pinecone"],
-      link: "https://engram.app",
-    },
-    {
-      name: "Frutero IoT Core",
-      role: "Engineering Lead",
-      description:
-        "IoT platform connecting refrigerated logistics assets to the cloud. Real-time telemetry, alerts, and fleet analytics.",
-      tags: ["MQTT", "TimescaleDB", "AWS", "React", "Node.js"],
-      link: "https://frutero.io",
-    },
-    {
-      name: "Barefoot Performance",
-      role: "Solo Builder",
-      description:
-        "Performance and uptime monitoring service for small engineering teams. Lightweight agents, fast dashboards, actionable alerts.",
-      tags: ["Go", "PostgreSQL", "Next.js", "WebSockets"],
-      link: "https://github.com/HBarefoot/performance-service",
-    },
-  ];
+const PROJECTS = [
+  {
+    year: "2025",
+    role: "Director of Technology",
+    title: "Allied Yacht Transport — ops automation",
+    for_: "Logistics ops team · 12-person marine transport company",
+    built:
+      "End-to-end booking, transport, and customs pipeline on Next.js + Node.js + n8n. Replaced 4 SaaS subscriptions with one internal system.",
+    outcome: "$500K+ saved on ops in year one. Lead time on quotes: 3 days → 4 hours.",
+    links: [
+      { label: "Case study", href: "#allied" },
+      { label: "Talk", href: "mailto:henry@barefoot.digital?subject=Allied%20case%20study" },
+    ],
+    stack: ["Next.js", "Node.js", "PostgreSQL", "n8n", "Stripe"],
+  },
+  {
+    year: "2024–25",
+    role: "Author & maintainer",
+    title: "Engram — MCP memory layer for AI agents",
+    for_: "AI engineers running multi-agent systems",
+    built:
+      "Open-source Model Context Protocol server that gives agents persistent, queryable memory across sessions. TypeScript, zero-config deploy, SQLite + Postgres backends.",
+    outcome: "Adopted by teams running 50+ agents in parallel. 95% reduction in redundant tool calls in benchmark workflows.",
+    links: [
+      { label: "GitHub", href: "https://github.com/HBarefoot/engram" },
+      { label: "NPM", href: "https://www.npmjs.com/package/engram-mcp" },
+    ],
+    stack: ["TypeScript", "MCP", "SQLite", "Postgres"],
+  },
+  {
+    year: "2026",
+    role: "Solo build",
+    title: "Barefoot Digital — lead scoring engine",
+    for_: "B2B service businesses with 50–500 leads/month",
+    built:
+      "Capture → enrich (Hunter.io) → AI score against your ICP → Slack alert for high-signal leads. n8n workflow + Ollama for local inference.",
+    outcome: "Replaced a $300/mo SaaS with a one-time build. 40+ hours/mo of manual triage eliminated.",
+    links: [
+      { label: "Live", href: "https://barefoot.digital/lead-engine" },
+      { label: "Source", href: "https://github.com/HBarefoot/lead-engine" },
+    ],
+    stack: ["n8n", "Ollama", "Hunter.io", "Slack API"],
+  },
+  {
+    year: "2026",
+    role: "Solo build",
+    title: "This site — portfolio + ops hub",
+    for_: "Recruiters, hiring managers, and me",
+    built:
+      "Next.js 16 + Tailwind v4, statically exported to GitHub Pages. Server components, one client wrapper for scroll reveal, edge-generated OG image.",
+    outcome: "Sub-1s cold load on a free CDN. Recruiter impact measured by replies, not vanity metrics.",
+    links: [
+      { label: "Repo", href: "https://github.com/HBarefoot/portfolio-henry" },
+    ],
+    stack: ["Next.js 16", "React 19", "Tailwind v4", "TypeScript"],
+  },
+];
 
-  return (
-    <section id="projects" ref={ref} className="px-6 py-24">
-      <div className="mx-auto max-w-3xl">
-        <h2 className="mb-10 text-2xl font-semibold text-zinc-100 sm:text-3xl">Selected Projects</h2>
-        <div className={`space-y-6 transition-all duration-700 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
-          {projects.map((project) => (
-            <div
-              key={project.name}
-              className="rounded-xl border border-zinc-900 bg-zinc-950/50 p-6 transition-colors hover:border-zinc-800"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-lg font-medium text-zinc-100">{project.name}</h3>
-                <span className="text-xs text-zinc-500">{project.role}</span>
-              </div>
-              <p className="mb-4 text-sm leading-relaxed text-zinc-400">{project.description}</p>
-              <div className="mb-4 flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <span key={tag} className="rounded-full border border-zinc-800 px-2.5 py-1 text-xs text-zinc-500">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <ExternalLink href={project.link}>View project</ExternalLink>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+const STACK = {
+  Languages: ["TypeScript", "JavaScript", "Python", "SQL"],
+  Frameworks: ["Next.js", "React", "Node.js", "Express", "FastAPI"],
+  Data: ["PostgreSQL", "SQLite", "Redis", "Prisma"],
+  AI: ["MCP", "OpenAI", "Anthropic", "Ollama", "n8n"],
+  Infra: ["Vercel", "GitHub Pages", "Cloudflare", "Docker"],
+};
 
-/* ─────────────────── Contact ─────────────────── */
-function Contact() {
-  const { ref, visible } = useInView();
+const WORK_STYLE = [
+  {
+    title: "Senior IC, not a manager",
+    body:
+      "I architect, write the code, deploy it, and own it in production. When I'm done, the system has a single throat to choke and that throat is me.",
+  },
+  {
+    title: "Outcomes over features",
+    body:
+      "I don't ship to look busy. Every line is in service of a number on a dashboard — $ saved, hours returned, errors cut, leads closed.",
+  },
+  {
+    title: "Boring tech, sharp execution",
+    body:
+      "Postgres. TypeScript. A static export. I pick tools that survive on-call at 2am over tools that look good in a blog post.",
+  },
+  {
+    title: "Tell me what's actually broken",
+    body:
+      "I work best with founders and directors who'll be straight with me about constraints, and with teams that want senior judgment, not junior obedience.",
+  },
+];
 
-  return (
-    <section id="contact" ref={ref} className="px-6 py-24">
-      <div className="mx-auto max-w-3xl">
-        <div
-          className={`rounded-2xl border border-zinc-900 bg-zinc-950/50 p-8 transition-all duration-700 sm:p-12 ${
-            visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
-        >
-          <h2 className="mb-4 text-2xl font-semibold text-zinc-100 sm:text-3xl">Let&apos;s build something real.</h2>
-          <p className="mb-8 max-w-lg text-zinc-400">
-            I work with founders and small teams who need senior engineering without the overhead of a full-time hire.
-            Tell me what you&apos;re building.
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <a
-              href="mailto:henrybarefoot@gmail.com"
-              onClick={() => {
-                // eslint-disable-next-line @typescript-eslint/no-require-imports
-                const posthog = require("posthog-js").default;
-                posthog.capture("contact_click", { method: "mailto", location: "contact_section" });
-              }}
-              className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-5 py-3 text-sm font-medium text-zinc-950 transition-colors hover:bg-white"
-            >
-              Email me
-            </a>
-            <ExternalLink href="https://linkedin.com/in/henrybarefoot">LinkedIn</ExternalLink>
-            <ExternalLink href="https://github.com/HBarefoot">GitHub</ExternalLink>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────── Footer ─────────────────── */
-function Footer() {
-  return (
-    <footer className="border-t border-zinc-900 px-6 py-12">
-      <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-4 text-sm text-zinc-500 sm:flex-row">
-        <p>&copy; {new Date().getFullYear()} Henry Barefoot. All rights reserved.</p>
-        <div className="flex gap-6">
-          <ExternalLink href="https://linkedin.com/in/henrybarefoot">LinkedIn</ExternalLink>
-          <ExternalLink href="https://github.com/HBarefoot">GitHub</ExternalLink>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* ─────────────────── Main Page ─────────────────── */
+/* ─────────────────── Page ─────────────────── */
 export default function Home() {
   return (
     <Fragment>
-      <Header />
-      <main>
-        <Hero />
-        <About />
-        <Services />
-        <Projects />
-        <Contact />
-      </main>
-      <Footer />
+      {/* ─────────────── NAV ─────────────── */}
+      <nav className="sticky top-0 z-50 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <Link
+            href="/"
+            className="font-mono text-sm font-semibold tracking-tight text-zinc-100"
+          >
+            henry<span className="text-violet-400">.</span>barefoot
+          </Link>
+          <div className="flex items-center gap-5 text-sm text-zinc-400">
+            <a href="#work" className="hidden hover:text-zinc-100 sm:inline">
+              Work
+            </a>
+            <a href="#stack" className="hidden hover:text-zinc-100 sm:inline">
+              Stack
+            </a>
+            <a href="#approach" className="hidden hover:text-zinc-100 sm:inline">
+              Approach
+            </a>
+            <a
+              href="mailto:henry@barefoot.digital?subject=Interview%20for%20%5Brole%5D"
+              className="inline-flex items-center gap-1.5 rounded-md border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 font-medium text-violet-200 transition-colors hover:border-violet-400 hover:bg-violet-500/20 hover:text-white"
+            >
+              <MailIcon />
+              <span>Hire me</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* ─────────────── HERO ─────────────── */}
+      <header className="relative">
+        <div className="mx-auto max-w-5xl px-6 pt-20 pb-16 sm:pt-32 sm:pb-24">
+          <RevealOnScroll>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-xs font-medium text-emerald-300">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              Open to senior IC and staff-level roles · remote / Plantation, FL
+            </div>
+          </RevealOnScroll>
+
+          <RevealOnScroll delay={80}>
+            <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight text-zinc-50 sm:text-6xl md:text-7xl">
+              I build production AI infrastructure
+              <br />
+              <span className="bg-gradient-to-r from-violet-300 via-violet-400 to-emerald-300 bg-clip-text text-transparent">
+                and the systems that ship it.
+              </span>
+            </h1>
+          </RevealOnScroll>
+
+          <RevealOnScroll delay={160}>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
+              Senior full-stack engineer. 6 years shipping{" "}
+              <span className="text-zinc-200">working code</span> — MCP servers,
+              lead-scoring engines, ops automation — for logistics and fintech
+              teams that needed it yesterday. Most recent role: Director of
+              Technology at Allied Yacht Transport.
+            </p>
+          </RevealOnScroll>
+
+          <RevealOnScroll delay={240}>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <a
+                href="mailto:henry@barefoot.digital?subject=Interview%20for%20%5Brole%5D"
+                className="inline-flex items-center gap-2 rounded-md bg-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-400 hover:shadow-violet-400/30"
+              >
+                Email me directly
+                <ArrowRight />
+              </a>
+              <a
+                href="/resume"
+                className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900/50 px-5 py-3 text-sm font-semibold text-zinc-100 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
+              >
+                <DownloadIcon />
+                Resume (PDF)
+              </a>
+              <a
+                href="#work"
+                className="inline-flex items-center gap-2 px-3 py-3 text-sm font-medium text-zinc-400 transition-colors hover:text-zinc-100"
+              >
+                See the work
+                <ChevronDown />
+              </a>
+            </div>
+          </RevealOnScroll>
+        </div>
+      </header>
+
+      {/* ─────────────── STATS BAND ─────────────── */}
+      <section className="border-y border-zinc-800/60 bg-zinc-900/30">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-px bg-zinc-800/40 sm:grid-cols-2 lg:grid-cols-4">
+          {STATS.map((s, i) => (
+            <RevealOnScroll key={s.label} delay={i * 80}>
+              <div className="bg-zinc-950 p-8">
+                <div className="font-mono text-3xl font-semibold text-emerald-300 sm:text-4xl">
+                  {s.value}
+                </div>
+                <div className="mt-2 text-sm leading-snug text-zinc-500">
+                  {s.label}
+                </div>
+              </div>
+            </RevealOnScroll>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────── SELECTED WORK ─────────────── */}
+      <section id="work" className="py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <RevealOnScroll>
+            <div className="mb-12">
+              <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
+                Selected work
+              </div>
+              <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
+                What I&apos;ve shipped, and what it produced.
+              </h2>
+              <p className="mt-3 max-w-2xl text-zinc-400">
+                Every project below has a real number attached. If you want the
+                full case study on any of them, my inbox is open.
+              </p>
+            </div>
+          </RevealOnScroll>
+
+          <div className="space-y-6">
+            {PROJECTS.map((p, i) => (
+              <RevealOnScroll key={p.title} delay={i * 60}>
+                <article className="group relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/40 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/70 sm:p-8">
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
+                    <div>
+                      <div className="font-mono text-xs uppercase tracking-widest text-zinc-500">
+                        {p.year} · {p.role}
+                      </div>
+                      <h3 className="mt-1 text-xl font-semibold text-zinc-50 sm:text-2xl">
+                        {p.title}
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.stack.map((s) => (
+                        <span
+                          key={s}
+                          className="rounded border border-zinc-800 bg-zinc-950/50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-zinc-400"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+                    <div>
+                      <dt className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                        For
+                      </dt>
+                      <dd className="mt-1 text-sm leading-relaxed text-zinc-300">
+                        {p.for_}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                        Built
+                      </dt>
+                      <dd className="mt-1 text-sm leading-relaxed text-zinc-300">
+                        {p.built}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-mono text-[10px] uppercase tracking-widest text-emerald-400">
+                        Outcome
+                      </dt>
+                      <dd className="mt-1 text-sm font-medium leading-relaxed text-zinc-100">
+                        {p.outcome}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {p.links.length > 0 && (
+                    <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-zinc-800/60 pt-4">
+                      {p.links.map((l) => (
+                        <a
+                          key={l.href}
+                          href={l.href}
+                          target={
+                            l.href.startsWith("http") ? "_blank" : undefined
+                          }
+                          rel={
+                            l.href.startsWith("http")
+                              ? "noopener noreferrer"
+                              : undefined
+                          }
+                          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 underline-offset-4 transition-colors hover:text-emerald-300 hover:underline"
+                        >
+                          {l.label}
+                          <ExternalArrow />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────── STACK ─────────────── */}
+      <section id="stack" className="border-t border-zinc-800/60 py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <RevealOnScroll>
+            <div className="mb-12">
+              <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
+                Stack
+              </div>
+              <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
+                What I reach for.
+              </h2>
+            </div>
+          </RevealOnScroll>
+
+          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-zinc-800 bg-zinc-800 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(STACK).map(([category, items], i) => (
+              <RevealOnScroll key={category} delay={i * 60}>
+                <div className="h-full bg-zinc-950 p-6">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                    {category}
+                  </div>
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {items.map((item) => (
+                      <li
+                        key={item}
+                        className="rounded border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 text-sm text-zinc-200"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────── APPROACH ─────────────── */}
+      <section id="approach" className="border-t border-zinc-800/60 py-20 sm:py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <RevealOnScroll>
+            <div className="mb-12">
+              <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
+                Approach
+              </div>
+              <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
+                How I work.
+              </h2>
+              <p className="mt-3 max-w-2xl text-zinc-400">
+                If you&apos;re hiring, here&apos;s the working style you&apos;re
+                signing up for.
+              </p>
+            </div>
+          </RevealOnScroll>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {WORK_STYLE.map((w, i) => (
+              <RevealOnScroll key={w.title} delay={i * 80}>
+                <div className="h-full rounded-lg border border-zinc-800 bg-zinc-900/30 p-6 transition-colors hover:border-zinc-700">
+                  <h3 className="text-lg font-semibold text-zinc-50">
+                    {w.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                    {w.body}
+                  </p>
+                </div>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────── CONTACT ─────────────── */}
+      <section
+        id="contact"
+        className="border-t border-zinc-800/60 bg-zinc-900/30 py-20 sm:py-28"
+      >
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <RevealOnScroll>
+            <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
+              Contact
+            </div>
+            <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
+              Let&apos;s talk.
+            </h2>
+            <p className="mt-4 text-zinc-400">
+              I read every message myself. If you&apos;re hiring, include the
+              role, the team, and the outcome you&apos;re hiring for. I&apos;ll
+              reply within 24 hours.
+            </p>
+          </RevealOnScroll>
+
+          <RevealOnScroll delay={120}>
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <a
+                href="mailto:henry@barefoot.digital?subject=Interview%20for%20%5Brole%5D"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-500 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-400 sm:w-auto"
+              >
+                <MailIcon />
+                henry@barefoot.digital
+              </a>
+              <a
+                href="https://github.com/HBarefoot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-950/50 px-6 py-3.5 text-base font-semibold text-zinc-100 transition-colors hover:border-zinc-500 sm:w-auto"
+              >
+                <GitHubIcon />
+                GitHub
+              </a>
+              <a
+                href="https://linkedin.com/in/henrybarefoot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-950/50 px-6 py-3.5 text-base font-semibold text-zinc-100 transition-colors hover:border-zinc-500 sm:w-auto"
+              >
+                <LinkedInIcon />
+                LinkedIn
+              </a>
+            </div>
+          </RevealOnScroll>
+
+          <RevealOnScroll delay={200}>
+            <div className="mt-10 font-mono text-xs uppercase tracking-widest text-zinc-600">
+              Plantation, FL · open to remote and on-site (Miami / NYC / SF)
+            </div>
+          </RevealOnScroll>
+        </div>
+      </section>
+
+      {/* ─────────────── FOOTER ─────────────── */}
+      <footer className="border-t border-zinc-800/60">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-zinc-500 sm:flex-row">
+          <div>
+            © {new Date().getFullYear()} Henry Barefoot · Barefoot Digital
+          </div>
+          <div className="font-mono">
+            Built with the Orchestrator Pattern
+          </div>
+        </div>
+      </footer>
     </Fragment>
   );
 }
