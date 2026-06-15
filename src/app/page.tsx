@@ -529,7 +529,7 @@ export default function Home() {
                 GitHub
               </a>
               <a
-                href="https://linkedin.com/in/henrybarefoot"
+                href="https://www.linkedin.com/in/hbarefoot/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-950/50 px-6 py-3.5 text-base font-semibold text-zinc-100 transition-colors hover:border-zinc-500 sm:w-auto"
