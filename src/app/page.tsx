@@ -124,26 +124,26 @@ function DownloadIcon() {
 
 /* ─────────────────── Data ─────────────────── */
 const STATS = [
-  { value: "$500K+", label: "saved on ops at Allied Yacht Transport" },
-  { value: "95%", label: "pipeline efficiency via Engram MCP" },
-  { value: "Days → minutes", label: "lead scoring with Hunter + n8n + Ollama" },
-  { value: "6 years", label: "shipping production systems solo and on teams" },
+  { value: "8+", label: "years shipping production web + AI systems" },
+  { value: "15+", label: "ports live on the Allied platform" },
+  { value: "Days → minutes", label: "quote turnaround at Allied Yacht Transport" },
+  { value: "226", label: "tests behind Engram v1.5.3 (open-source, MIT)" },
 ];
 
 const PROJECTS = [
   {
     year: "2025",
     role: "Director of Technology",
-    title: "Allied Yacht Transport — ops automation",
-    for_: "Logistics ops team · 12-person marine transport company",
+    title: "Allied — AI-powered yacht transport platform",
+    for_: "Allied Yacht Transport · 15+ international ports",
     built:
-      "End-to-end booking, transport, and customs pipeline on Next.js + Node.js + n8n. Replaced 4 SaaS subscriptions with one internal system.",
-    outcome: "$500K+ saved on ops in year one. Lead time on quotes: 3 days → 4 hours.",
+      "Three Claude-powered agents (visitor/member/admin) with human-in-the-loop approval. Dynamic pricing + routing engine. Secure admin dashboard with RBAC.",
+    outcome: "Days → minutes quote turnaround across 15+ international ports. $500K+ saved on ops in year one.",
     links: [
       { label: "Case study", href: "#allied" },
-      { label: "Talk", href: "mailto:henry@barefoot.digital?subject=Allied%20case%20study" },
+      { label: "Talk", href: "mailto:henrybarefoot1987@gmail.com?subject=Allied%20case%20study" },
     ],
-    stack: ["Next.js", "Node.js", "PostgreSQL", "n8n", "Stripe"],
+    stack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "n8n", "Claude API", "Tailwind CSS", "Vercel"],
   },
   {
     year: "2024–25",
@@ -151,40 +151,26 @@ const PROJECTS = [
     title: "Engram — MCP memory layer for AI agents",
     for_: "AI engineers running multi-agent systems",
     built:
-      "Open-source Model Context Protocol server that gives agents persistent, queryable memory across sessions. TypeScript, zero-config deploy, SQLite + Postgres backends.",
-    outcome: "Adopted by teams running 50+ agents in parallel. 95% reduction in redundant tool calls in benchmark workflows.",
+      "Open-source Model Context Protocol server that gives agents persistent, queryable memory across sessions. Single-process Node.js + SQLite + FTS5 + local embeddings — zero Docker, Postgres, or Qdrant dependencies. Works with Claude Desktop, Claude Code, Cursor, n8n, and any MCP client.",
+    outcome: "v1.5.3 in production · 226 tests · MIT-licensed · GitHub Sponsors · listed in 6 MCP-server directories.",
     links: [
       { label: "GitHub", href: "https://github.com/HBarefoot/engram" },
       { label: "NPM", href: "https://www.npmjs.com/package/engram-mcp" },
     ],
-    stack: ["TypeScript", "MCP", "SQLite", "Postgres"],
+    stack: ["Node.js", "TypeScript", "SQLite (FTS5)", "MCP", "Xenova"],
   },
   {
-    year: "2026",
-    role: "Solo build",
-    title: "Barefoot Digital — lead scoring engine",
-    for_: "B2B service businesses with 50–500 leads/month",
+    year: "2025–26",
+    role: "Founder & builder",
+    title: "Paw — personal AI orchestrator",
+    for_: "Barefoot Digital",
     built:
-      "Capture → enrich (Hunter.io) → AI score against your ICP → Slack alert for high-signal leads. n8n workflow + Ollama for local inference.",
-    outcome: "Replaced a $300/mo SaaS with a one-time build. 40+ hours/mo of manual triage eliminated.",
+      "Bun + TypeScript kernel; multi-provider (Claude, OpenAI, Ollama, Gemini); plugin + MCP system; hybrid vector + FTS memory (SQLite + sqlite-vec); cron, web UI (Hono/JSX), and a Slack orchestrator that routes to specialist sub-agents.",
+    outcome: "Runs Henry's pipeline + ops in Slack; white-labeled into ConstructAI.",
     links: [
-      { label: "Live", href: "https://barefoot.digital/lead-engine" },
-      { label: "Source", href: "https://github.com/HBarefoot/lead-engine" },
+      { label: "Live", href: "https://paw.henrybarefoot.com" },
     ],
-    stack: ["n8n", "Ollama", "Hunter.io", "Slack API"],
-  },
-  {
-    year: "2026",
-    role: "Solo build",
-    title: "This site — portfolio + ops hub",
-    for_: "Recruiters, hiring managers, and me",
-    built:
-      "Next.js 16 + Tailwind v4, statically exported to GitHub Pages. Server components, one client wrapper for scroll reveal, edge-generated OG image.",
-    outcome: "Sub-1s cold load on a free CDN. Recruiter impact measured by replies, not vanity metrics.",
-    links: [
-      { label: "Repo", href: "https://github.com/HBarefoot/portfolio-henry" },
-    ],
-    stack: ["Next.js 16", "React 19", "Tailwind v4", "TypeScript"],
+    stack: ["Bun", "TypeScript", "Hono", "SQLite", "MCP", "Claude API"],
   },
 ];
 
@@ -243,7 +229,7 @@ export default function Home() {
               Approach
             </a>
             <a
-              href="mailto:henry@barefoot.digital?subject=Interview%20for%20%5Brole%5D"
+              href="mailto:henrybarefoot1987@gmail.com?subject=Interview%20for%20%5Brole%5D"
               className="inline-flex items-center gap-1.5 rounded-md border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 font-medium text-violet-200 transition-colors hover:border-violet-400 hover:bg-violet-500/20 hover:text-white"
             >
               <MailIcon />
@@ -262,7 +248,7 @@ export default function Home() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              Open to senior IC and staff-level roles · remote / Plantation, FL
+              Open to senior contract or W-2 roles · fully remote · Plantation, FL
             </div>
           </RevealOnScroll>
 
@@ -278,9 +264,9 @@ export default function Home() {
 
           <RevealOnScroll delay={160}>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
-              Senior full-stack engineer. 6 years shipping{" "}
-              <span className="text-zinc-200">working code</span> — MCP servers,
-              lead-scoring engines, ops automation — for logistics and fintech
+              Senior full-stack engineer. 8+ years shipping{" "}
+              <span className="text-zinc-200">production web + AI systems</span> — MCP servers,
+              agentic orchestration, and ops automation — for logistics and fintech
               teams that needed it yesterday. Most recent role: Director of
               Technology at Allied Yacht Transport.
             </p>
@@ -289,14 +275,14 @@ export default function Home() {
           <RevealOnScroll delay={240}>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <a
-                href="mailto:henry@barefoot.digital?subject=Interview%20for%20%5Brole%5D"
+                href="mailto:henrybarefoot1987@gmail.com?subject=Interview%20for%20%5Brole%5D"
                 className="inline-flex items-center gap-2 rounded-md bg-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-400 hover:shadow-violet-400/30"
               >
                 Email me directly
                 <ArrowRight />
               </a>
               <a
-                href="/resume"
+                href="/Henry_Barefoot_Resume.pdf"
                 className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900/50 px-5 py-3 text-sm font-semibold text-zinc-100 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
               >
                 <DownloadIcon />
@@ -527,11 +513,11 @@ export default function Home() {
           <RevealOnScroll delay={120}>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <a
-                href="mailto:henry@barefoot.digital?subject=Interview%20for%20%5Brole%5D"
+                href="mailto:henrybarefoot1987@gmail.com?subject=Interview%20for%20%5Brole%5D"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-500 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-400 sm:w-auto"
               >
                 <MailIcon />
-                henry@barefoot.digital
+                henrybarefoot1987@gmail.com
               </a>
               <a
                 href="https://github.com/HBarefoot"
@@ -556,7 +542,7 @@ export default function Home() {
 
           <RevealOnScroll delay={200}>
             <div className="mt-10 font-mono text-xs uppercase tracking-widest text-zinc-600">
-              Plantation, FL · open to remote and on-site (Miami / NYC / SF)
+              Plantation, FL · open to senior contract or W-2 roles · fully remote
             </div>
           </RevealOnScroll>
         </div>
