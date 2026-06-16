@@ -1,15 +1,21 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
 import AgentConsole from "./components/AgentConsole";
 import HeroBackdrop from "./components/HeroBackdrop";
 import ExperienceTimeline from "./components/ExperienceTimeline";
 import StoryArc from "./components/StoryArc";
-import SpotlightLink from "./components/SpotlightLink";
+import PointerEffects from "./components/PointerEffects";
+import TrackedLink from "./components/TrackedLink";
 
 const RESUME = "/Henry_Barefoot_Resume.pdf";
 const EMAIL = "henrybarefoot1987@gmail.com";
 const GITHUB = "https://github.com/HBarefoot";
 const LINKEDIN = "https://www.linkedin.com/in/hbarefoot/";
+
+// Pointer-tracking spotlight gradient for [data-spot] surfaces.
+const spot = (px: number, pct: number, fade: number, base?: string) =>
+  `radial-gradient(${px}px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent, #57b0e8) ${pct}%, transparent), transparent ${fade}%)${
+    base ? `, ${base}` : ""
+  }`;
 
 const chip: CSSProperties = {
   fontSize: 11,
@@ -75,6 +81,30 @@ export default function Home() {
         } as CSSProperties
       }
     >
+      {/* page-global pointer interactions (cursor glow + spotlight + magnetic) */}
+      <PointerEffects />
+      <div
+        data-cursor-glow
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: 460,
+          height: 460,
+          margin: "-230px 0 0 -230px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, color-mix(in oklab, var(--accent, #57b0e8) 20%, transparent), transparent 60%)",
+          pointerEvents: "none",
+          zIndex: 60,
+          opacity: 0,
+          transition: "opacity .5s ease",
+          mixBlendMode: "screen",
+          willChange: "transform",
+        }}
+      />
+
       {/* ─────────────── NAV ─────────────── */}
       <nav
         style={{
@@ -146,7 +176,7 @@ export default function Home() {
       {/* ─────────────── HERO ─────────────── */}
       <header id="top" style={{ position: "relative", overflow: "hidden" }}>
         <HeroBackdrop />
-        <div style={{ position: "relative", maxWidth: 1120, margin: "0 auto", padding: "96px 32px 80px" }}>
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 1120, margin: "0 auto", padding: "96px 32px 80px" }}>
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-14 items-start">
             {/* left: statement */}
             <div>
@@ -229,8 +259,10 @@ export default function Home() {
                   animationDelay: ".34s",
                 }}
               >
-                <a
+                <TrackedLink
+                  event="hero_contact_clicked"
                   href="#contact"
+                  data-magnetic=""
                   className="btn-accent"
                   style={{
                     display: "inline-flex",
@@ -246,8 +278,9 @@ export default function Home() {
                 >
                   Get in touch
                   <span className="font-mono">→</span>
-                </a>
-                <a
+                </TrackedLink>
+                <TrackedLink
+                  event="resume_downloaded"
                   href={RESUME}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -266,7 +299,7 @@ export default function Home() {
                   }}
                 >
                   Resume (PDF)
-                </a>
+                </TrackedLink>
                 <a
                   href="#work"
                   className="link-soft"
@@ -356,6 +389,7 @@ export default function Home() {
             {/* 01 Allied */}
             <article
               data-reveal
+              data-spot
               className="work-row"
               style={{
                 display: "grid",
@@ -364,6 +398,7 @@ export default function Home() {
                 padding: "36px 0 36px 16px",
                 marginLeft: -16,
                 borderTop: "1px solid rgba(255,255,255,0.09)",
+                background: spot(480, 8, 55),
               }}
             >
               <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
@@ -426,9 +461,15 @@ export default function Home() {
                   ))}
                 </div>
                 <div style={{ marginTop: 20 }}>
-                  <Link href="/yacht-transport" className="link-accent font-mono" style={{ fontSize: 13.5 }}>
+                  <TrackedLink
+                    event="case_study_clicked"
+                    properties={{ project: "Allied Yacht Transport" }}
+                    href="/yacht-transport"
+                    className="link-accent font-mono"
+                    style={{ fontSize: 13.5 }}
+                  >
                     Case study →
-                  </Link>
+                  </TrackedLink>
                 </div>
               </div>
             </article>
@@ -436,6 +477,7 @@ export default function Home() {
             {/* 02 Engram */}
             <article
               data-reveal
+              data-spot
               className="work-row"
               style={{
                 display: "grid",
@@ -444,6 +486,7 @@ export default function Home() {
                 padding: "36px 0 36px 16px",
                 marginLeft: -16,
                 borderTop: "1px solid rgba(255,255,255,0.09)",
+                background: spot(480, 8, 55),
               }}
             >
               <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
@@ -490,7 +533,9 @@ export default function Home() {
                   ))}
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 18, marginTop: 20 }}>
-                  <a
+                  <TrackedLink
+                    event="oss_card_clicked"
+                    properties={{ project_name: "engram", location: "work_section" }}
                     href={`${GITHUB}/engram`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -501,7 +546,7 @@ export default function Home() {
                     <span className="font-mono" style={{ fontSize: 11 }}>
                       ↗
                     </span>
-                  </a>
+                  </TrackedLink>
                 </div>
               </div>
             </article>
@@ -509,6 +554,7 @@ export default function Home() {
             {/* 03 Paw */}
             <article
               data-reveal
+              data-spot
               className="work-row"
               style={{
                 display: "grid",
@@ -517,6 +563,7 @@ export default function Home() {
                 padding: "36px 0 36px 16px",
                 marginLeft: -16,
                 borderTop: "1px solid rgba(255,255,255,0.09)",
+                background: spot(480, 8, 55),
               }}
             >
               <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
@@ -569,6 +616,7 @@ export default function Home() {
             {/* 04 Frutero */}
             <article
               data-reveal
+              data-spot
               className="work-row"
               style={{
                 display: "grid",
@@ -578,6 +626,7 @@ export default function Home() {
                 marginLeft: -16,
                 borderTop: "1px solid rgba(255,255,255,0.09)",
                 borderBottom: "1px solid rgba(255,255,255,0.09)",
+                background: spot(480, 8, 55),
               }}
             >
               <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
@@ -673,7 +722,23 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Engram card */}
-            <SpotlightLink href={`${GITHUB}/engram`}>
+            <TrackedLink
+              event="oss_card_clicked"
+              properties={{ project_name: "engram" }}
+              data-reveal=""
+              data-spot=""
+              href={`${GITHUB}/engram`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="oss-card"
+              style={{
+                display: "block",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 12,
+                padding: 24,
+                background: spot(300, 16, 66, "#0d1014"),
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span className="font-mono" style={{ fontSize: 13, color: "#d6dbe0" }}>
                   HBarefoot / engram
@@ -701,10 +766,27 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-            </SpotlightLink>
+            </TrackedLink>
 
             {/* Paw card */}
-            <SpotlightLink href={GITHUB} dataRd="1">
+            <TrackedLink
+              event="oss_card_clicked"
+              properties={{ project_name: "paw" }}
+              data-reveal=""
+              data-rd="1"
+              data-spot=""
+              href={GITHUB}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="oss-card"
+              style={{
+                display: "block",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 12,
+                padding: 24,
+                background: spot(300, 16, 66, "#0d1014"),
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span className="font-mono" style={{ fontSize: 13, color: "#d6dbe0" }}>
                   HBarefoot / paw
@@ -744,7 +826,7 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-            </SpotlightLink>
+            </TrackedLink>
           </div>
         </div>
       </section>
@@ -784,7 +866,7 @@ export default function Home() {
               },
               { label: "Automation & DevOps", items: ["n8n", "Stripe", "Docker", "Vercel", "AWS", "GitHub Actions"] },
             ].map((cat) => (
-              <div key={cat.label} style={{ background: "#0a0c0f", padding: 24 }}>
+              <div key={cat.label} data-spot style={{ background: spot(300, 10, 60, "#0a0c0f"), padding: 24 }}>
                 <div
                   className="font-mono"
                   style={{ ...cellLabel, color: cat.accent ? "var(--accent, #57b0e8)" : "#5b6571" }}
@@ -793,7 +875,7 @@ export default function Home() {
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                   {cat.items.map((it) => (
-                    <span key={it} style={cat.accent ? aiTag : stackTag}>
+                    <span key={it} className="stack-chip" style={cat.accent ? aiTag : stackTag}>
                       {it}
                     </span>
                   ))}
@@ -840,17 +922,67 @@ export default function Home() {
                   "Postgres, TypeScript, a clean deploy. I pick tools that survive on-call at 2am over tools that look good in a thread.",
               },
             ].map((c) => (
-              <div key={c.n} data-reveal data-rd={c.rd}>
-                <div className="font-mono" style={{ fontSize: 12, color: "var(--accent, #57b0e8)", marginBottom: 14 }}>
+              <div
+                key={c.n}
+                data-reveal
+                data-rd={c.rd}
+                data-spot
+                className="approach-card"
+                style={{
+                  position: "relative",
+                  overflow: "hidden",
+                  height: "100%",
+                  border: "1px solid rgba(255,255,255,0.09)",
+                  borderRadius: 14,
+                  background: spot(340, 9, 60),
+                  padding: "30px 26px",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="font-display"
+                  style={{
+                    position: "absolute",
+                    top: -24,
+                    right: 2,
+                    fontWeight: 700,
+                    fontSize: 120,
+                    lineHeight: 1,
+                    color: "rgba(255,255,255,0.04)",
+                    pointerEvents: "none",
+                  }}
+                >
                   {c.n}
+                </span>
+                <div
+                  className="font-mono"
+                  style={{
+                    position: "relative",
+                    fontSize: 11,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "var(--accent, #57b0e8)",
+                    marginBottom: 16,
+                  }}
+                >
+                  Principle {c.n}
                 </div>
                 <h3
                   className="font-display"
-                  style={{ fontWeight: 600, fontSize: 18, color: "#f4f6f8", margin: "0 0 10px" }}
+                  style={{
+                    position: "relative",
+                    fontWeight: 600,
+                    fontSize: 19,
+                    letterSpacing: "-0.01em",
+                    color: "#f4f6f8",
+                    margin: "0 0 10px",
+                  }}
                 >
                   {c.title}
                 </h3>
-                <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: "#9aa3ad" }}>{c.body}</p>
+                <p style={{ position: "relative", margin: 0, fontSize: 14.5, lineHeight: 1.62, color: "#9aa3ad" }}>
+                  {c.body}
+                </p>
               </div>
             ))}
           </div>
@@ -860,9 +992,29 @@ export default function Home() {
       {/* ─────────────── CONTACT ─────────────── */}
       <section
         id="contact"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.012)" }}
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          borderTop: "1px solid rgba(255,255,255,0.07)",
+          background: "rgba(255,255,255,0.012)",
+        }}
       >
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "100px 32px" }}>
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            bottom: -200,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 820,
+            height: 460,
+            background:
+              "radial-gradient(ellipse at center, color-mix(in oklab, var(--accent, #57b0e8) 14%, transparent), transparent 66%)",
+            filter: "blur(54px)",
+            pointerEvents: "none",
+          }}
+        />
+        <div style={{ position: "relative", maxWidth: 1120, margin: "0 auto", padding: "100px 32px" }}>
           <div data-reveal style={{ maxWidth: 680 }}>
             <div className="font-mono" style={{ ...kicker, marginBottom: 18 }}>
               06 — Contact
@@ -888,9 +1040,11 @@ export default function Home() {
             </p>
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 36 }}>
-              <a
+              <TrackedLink
+                event="contact_email_clicked"
                 href={`mailto:${EMAIL}`}
-                className="btn-accent"
+                data-magnetic=""
+                className="btn-accent btn-email"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -904,8 +1058,9 @@ export default function Home() {
                 }}
               >
                 {EMAIL}
-              </a>
-              <a
+              </TrackedLink>
+              <TrackedLink
+                event="contact_github_clicked"
                 href={GITHUB}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -923,8 +1078,9 @@ export default function Home() {
                 }}
               >
                 GitHub
-              </a>
-              <a
+              </TrackedLink>
+              <TrackedLink
+                event="contact_linkedin_clicked"
                 href={LINKEDIN}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -942,7 +1098,7 @@ export default function Home() {
                 }}
               >
                 LinkedIn
-              </a>
+              </TrackedLink>
             </div>
 
             <div
