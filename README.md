@@ -67,3 +67,5 @@ pnpm typecheck    # tsc --noEmit
 ---
 
 _Built with the Orchestrator Pattern · AI infrastructure that ships._
+
+😊
