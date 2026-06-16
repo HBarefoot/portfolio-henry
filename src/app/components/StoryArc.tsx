@@ -56,7 +56,6 @@ export default function StoryArc() {
     return () => clearInterval(id);
   }, [playing]);
 
-  const chapter = ARC[active];
   const progress = TOTAL > 1 ? `${((active / (TOTAL - 1)) * 100).toFixed(1)}%` : "0%";
   const counter = `${String(active + 1).padStart(2, "0")} / ${String(TOTAL).padStart(2, "0")}`;
 
@@ -128,49 +127,68 @@ export default function StoryArc() {
         </div>
       </div>
 
-      {/* narrating panel — key on `active` replays the crossfade each chapter change */}
+      {/* narrating panel — every chapter is rendered stacked in the same grid cell, so the
+          panel always sizes to the TALLEST chapter and its height never changes when the active
+          chapter advances. This prevents the periodic vertical "jumps" (the panel used to grow/
+          shrink as each chapter's text wrapped to a different line count on mobile, reflowing every
+          section below it). Only the active layer is visible; the opacity transition is the crossfade. */}
       <div
-        key={active}
         style={{
           display: "grid",
-          gridTemplateColumns: "auto 1fr",
-          gap: "clamp(20px, 4vw, 44px)",
-          alignItems: "center",
           minHeight: 168,
           border: "1px solid rgba(255,255,255,0.08)",
           borderRadius: 14,
           background: "linear-gradient(180deg, rgba(255,255,255,0.022), rgba(255,255,255,0))",
           padding: "32px clamp(22px, 3vw, 36px)",
-          animation: "hbfadeup .5s cubic-bezier(.22,.61,.36,1) both",
         }}
       >
-        <div
-          className="font-display"
-          style={{
-            fontWeight: 600,
-            fontSize: "clamp(46px, 6.5vw, 82px)",
-            lineHeight: 0.95,
-            letterSpacing: "-0.03em",
-            color: "var(--accent, #57b0e8)",
-          }}
-        >
-          {chapter.year}
-        </div>
-        <div>
-          <div
-            className="font-mono"
-            style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#7e8893", marginBottom: 10 }}
-          >
-            {chapter.tag}
-          </div>
-          <div
-            className="font-display"
-            style={{ fontWeight: 600, fontSize: 20, letterSpacing: "-0.01em", color: "#f4f6f8", marginBottom: 12 }}
-          >
-            {chapter.role}
-          </div>
-          <p style={{ margin: 0, maxWidth: 620, fontSize: 16, lineHeight: 1.62, color: "#9aa3ad" }}>{chapter.line}</p>
-        </div>
+        {ARC.map((c, idx) => {
+          const isActive = idx === active;
+          return (
+            <div
+              key={c.year}
+              aria-hidden={!isActive}
+              style={{
+                gridArea: "1 / 1",
+                display: "grid",
+                gridTemplateColumns: "auto 1fr",
+                gap: "clamp(20px, 4vw, 44px)",
+                alignItems: "center",
+                opacity: isActive ? 1 : 0,
+                pointerEvents: isActive ? "auto" : "none",
+                transition: "opacity .45s ease",
+              }}
+            >
+              <div
+                className="font-display"
+                style={{
+                  fontWeight: 600,
+                  fontSize: "clamp(46px, 6.5vw, 82px)",
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.03em",
+                  color: "var(--accent, #57b0e8)",
+                }}
+              >
+                {c.year}
+              </div>
+              <div>
+                <div
+                  className="font-mono"
+                  style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#7e8893", marginBottom: 10 }}
+                >
+                  {c.tag}
+                </div>
+                <div
+                  className="font-display"
+                  style={{ fontWeight: 600, fontSize: 20, letterSpacing: "-0.01em", color: "#f4f6f8", marginBottom: 12 }}
+                >
+                  {c.role}
+                </div>
+                <p style={{ margin: 0, maxWidth: 620, fontSize: 16, lineHeight: 1.62, color: "#9aa3ad" }}>{c.line}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* controls */}
