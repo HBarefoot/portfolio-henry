@@ -210,6 +210,19 @@ a {
   }
 }
 
+/* ─────────────── Contact form ─────────────── */
+.lead-input:focus {
+  outline: none;
+  border-color: var(--accent, #57b0e8);
+}
+.lead-input::placeholder {
+  color: #3d4650;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
