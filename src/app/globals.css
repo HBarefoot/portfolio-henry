@@ -210,6 +210,21 @@ a {
   }
 }
 
+/* Contact form inputs */
+.lead-input::placeholder {
+  color: #5b6571;
+}
+.lead-input:focus {
+  border-color: color-mix(in oklab, var(--accent, #57b0e8) 60%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #57b0e8) 14%, transparent);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
