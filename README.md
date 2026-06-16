@@ -14,48 +14,66 @@ I build production AI systems for logistics and fintech — MCP servers, lead-sc
 - **95%** pipeline efficiency via Engram MCP memory layer
 - **Days → minutes** on lead scoring with Hunter.io + n8n + Ollama orchestration
 
-## What's on the site
+## About this repo
 
-- **Hero** with quantified outcomes, not job titles
-- **Selected work** — Allied Yacht Transport, Engram MCP, Barefoot Digital (this site)
-- **Stack** — Next.js 16 · React 19 · TypeScript · Node.js · MCP · n8n · Tailwind v4
-- **How I work** — senior IC who ships solo, owns architecture through production
-- **Contact** — direct email, no forms to fill out
+This is the source for [henrybarefoot.com](https://henrybarefoot.com) — a personal portfolio and static site. The site itself is in active development; this repo currently contains the project scaffold, tooling, and brand foundation:
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript** (strict)
+- **Tailwind CSS v4** + brand tokens as CSS variables (per `BRAND_GUIDELINES.md`)
+- **PostHog** analytics wired via Next.js rewrites in `next.config.ts`
+- **Static resume PDF** at `public/Henry-Barefoot-Resume.pdf`
+- **Claude Code** workflows installed (`.github/workflows/claude.yml`, `claude-code-review.yml`)
 
 ## Stack
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | Next.js 16 (App Router) | Static export → GitHub Pages, zero infra |
+| Framework | Next.js 16 (App Router) | Modern React, server-first, static export to GitHub Pages |
 | Language | TypeScript (strict) | Catches the bugs that cost you weekends |
 | Styling | Tailwind CSS v4 | No dead CSS ships, fast cold starts |
-| AI / MCP | Custom MCP servers | Agents as first-class tools, not chatbots |
-| Automation | n8n | Visual orchestration for non-engineers on the team |
+| Analytics | PostHog | Privacy-friendly, no cookies by default, owned data |
 | Hosting | GitHub Pages | Free, fast, version-controlled, zero config |
-
-## Architecture decisions
-
-1. **Static export (`output: "export"`)** — this is a portfolio, not a SaaS. Edge CDN, sub-second cold load, no server to babysit.
-2. **No `use client` at the page level** — the entire interactive surface is one extracted `<RevealOnScroll>` client component. The rest is server-rendered HTML.
-3. **Brand tokens in CSS variables** — every color, font, and spacing value is a single source of truth. No theme leaks.
-4. **Open Graph image is a static asset** — `public/og.png` (1200×630 PNG) referenced from `layout.tsx` via `openGraph.images` and `twitter.images`. `next/og`'s `ImageResponse` is incompatible with `output: "export"` (it requires edge runtime), so we hand-author the asset and commit it. Replace `public/og.png` to update.
-5. **Sitemap + robots.ts** — searchable from day one. Add `NEXT_PUBLIC_SITE_URL` to swap the origin.
+| Repo automation | Claude Code (GitHub Action) | AI-assisted PRs against this repo |
 
 ## Running it
 
 ```bash
-pnpm install
-pnpm dev          # http://localhost:3000
-pnpm build        # static export to ./dist
-pnpm typecheck    # tsc --noEmit
+npm install
+npm run dev          # http://localhost:3000
+npm run build        # production build
+npm run typecheck    # tsc --noEmit
+npm run lint         # eslint
 ```
 
-## Environment variables (all optional)
+> Note: a previous version of this README referenced `pnpm`. This project uses **npm** — there is a `package-lock.json` and no `pnpm-lock.yaml`.
 
-| Var | Default | Purpose |
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in:
+
+| Var | Required | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | `https://henrybarefoot.com` | Used in canonical URLs, sitemap, robots |
-| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | _unset_ | Privacy-friendly analytics. No-op until set. |
+| `NEXT_PUBLIC_POSTHOG_KEY` | Yes (for analytics) | PostHog project API key |
+| `NEXT_PUBLIC_POSTHOG_HOST` | No (defaults to `https://us.i.posthog.com`) | PostHog ingest host |
+| `NEXT_PUBLIC_SITE_URL` | No (defaults to `https://henrybarefoot.com`) | Canonical origin for SEO / metadata |
+
+## Project layout
+
+```
+portfolio-henry/
+├── .github/workflows/      # Claude Code actions
+├── AGENTS.md               # Notes for AI agents (Next.js 16 breaking changes)
+├── BRAND_GUIDELINES.md     # Brand system (colors, fonts, voice, logo)
+├── next.config.ts          # Next config + PostHog rewrites
+├── package.json
+├── tsconfig.json
+├── public/                 # Static assets (resume PDF, favicons)
+│   ├── Henry-Barefoot-Resume.pdf
+│   ├── .gitkeep            # placeholder for og.png (not yet committed)
+│   ├── favicon.ico
+│   └── ...
+└── README.md
+```
 
 ## Contact
 
