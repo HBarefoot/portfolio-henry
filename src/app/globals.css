@@ -1,20 +1,180 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0a0a0a;
-  --color-foreground: #ededed;
-  --font-sans: var(--font-geist);
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+  /* Palette — "AI-infrastructure field notebook" */
+  --color-canvas: #0a0c0f;
+  --color-panel: #0c0f13;
+  --color-ink: #f6f8fa;
+  --color-text: #e8eaed;
+  --color-soft: #d6dbe0;
+  --color-muted: #9aa3ad;
+  --color-faint: #7e8893;
+  --color-dim: #5b6571;
+  --color-accent: #57b0e8;
+  --color-emerald: #5fd0a0;
+
+  /* Type */
+  --font-display: var(--font-space-grotesk);
+  --font-body: var(--font-hanken-grotesk);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: #0a0a0a;
-  color: #a1a1aa;
-  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  background: #0a0c0f;
+  color: #e8eaed;
+  font-family: var(--font-hanken-grotesk), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  text-decoration: none;
 }
 
 ::selection {
-  background: rgba(161, 161, 170, 0.2);
-  color: #fafafa;
+  background: rgba(87, 176, 232, 0.28);
+  color: #fff;
+}
+
+/* ─────────────── Entrance / ambient keyframes (ported from the design) ─────────────── */
+@keyframes hbpulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.82);
+  }
+}
+@keyframes hbfade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes hbrise {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hbslide {
+  from {
+    transform: translateX(28px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes hbup {
+  from {
+    transform: translateY(22px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes hbblink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ─────────────── Hover affordances (so the page stays a server component) ─────────────── */
+.nav-link {
+  color: #9aa3ad;
+  transition: color 0.2s;
+}
+.nav-link:hover {
+  color: #e8eaed;
+}
+
+.btn-accent {
+  transition: filter 0.2s;
+}
+.btn-accent:hover {
+  filter: brightness(1.08);
+}
+
+.btn-ghost {
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.btn-outline {
+  transition: border-color 0.2s;
+}
+.btn-outline:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.link-soft {
+  color: #7e8893;
+  transition: color 0.2s;
+}
+.link-soft:hover {
+  color: #d6dbe0;
+}
+
+.link-accent {
+  color: var(--accent, #57b0e8);
+  transition: opacity 0.2s;
+}
+.link-accent:hover {
+  opacity: 0.75;
+}
+
+.work-row {
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+.work-row:hover {
+  box-shadow: inset 2px 0 0 var(--accent, #57b0e8);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+/* ─────────────── Scroll-driven reveals (progressive enhancement) ─────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-reveal] {
+      animation-name: hbrise;
+      animation-duration: auto;
+      animation-fill-mode: both;
+      animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+    [data-reveal][data-rd="1"] {
+      animation-range: entry 0% cover 33%;
+    }
+    [data-reveal][data-rd="2"] {
+      animation-range: entry 0% cover 41%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

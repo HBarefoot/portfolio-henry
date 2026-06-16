@@ -11,7 +11,10 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
 
     posthog.init(key, {
       api_host: "/ingest",
-      capture_pageview: false,
+      // Automatic pageview capture on history API changes — covers the initial
+      // load and Next.js App Router client navigations. Replaces the old manual
+      // usePathname() tracker (which wasn't landing $pageview events).
+      capture_pageview: "history_change",
       defaults: "2026-01-30",
       loaded: (posthog) => {
         if (process.env.NODE_ENV === "development") {
