@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Space_Grotesk, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { PostHogProvider } from "./providers";
-import PostHogPageView from "./PostHogPageView";
 
-const geist = Geist({
-  variable: "--font-geist",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const hankenGrotesk = Hanken_Grotesk({
+  variable: "--font-hanken-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 const SITE_URL =
@@ -16,22 +28,23 @@ const OG_IMAGE = "/og.png";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Henry Barefoot — Senior Full-Stack Engineer · Next.js · Node.js · AI Infra",
+    default: "Henry Barefoot — Senior Full-Stack Engineer · AI Systems · Next.js · Node.js",
     template: "%s · Henry Barefoot",
   },
   description:
-    "Senior full-stack engineer. I build production AI infrastructure and the systems that ship it. Allied Yacht Transport: $500K+ saved on ops. Engram MCP: 95% pipeline efficiency. Days-to-minutes on lead scoring.",
+    "Senior full-stack engineer, 8+ years. I architect, write, deploy, and operate production AI systems — agentic workflows, RAG pipelines, and the automation that ties a business together. Most recently Director of Technology at Allied Yacht Transport.",
   keywords: [
     "Henry Barefoot",
     "Senior Full-Stack Engineer",
+    "AI Systems",
+    "Agentic Systems",
     "Next.js",
     "Node.js",
     "TypeScript",
-    "AI Infrastructure",
+    "RAG",
     "MCP",
     "Engram",
-    "Barefoot Digital",
-    "Plantation FL",
+    "Miami FL",
   ],
   authors: [{ name: "Henry Barefoot", url: SITE_URL }],
   creator: "Henry Barefoot",
@@ -40,15 +53,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "Henry Barefoot",
-    title: "Henry Barefoot — Senior Full-Stack Engineer · Next.js · Node.js · AI Infra",
+    title: "Henry Barefoot — Senior Full-Stack Engineer · AI Systems",
     description:
-      "Production AI infrastructure and the systems that ship it. Allied Yacht Transport: $500K+ saved. Engram MCP: 95% pipeline efficiency.",
+      "I build production AI systems and own them end to end — agentic workflows, RAG pipelines, and automation. Director of Technology at Allied Yacht Transport; author of the Engram MCP memory layer.",
     images: [
       {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "Henry Barefoot — Senior Full-Stack Engineer. $500K+ saved on ops. 95% pipeline efficiency. Next.js, Node.js, AI infrastructure.",
+        alt: "Henry Barefoot — Senior Full-Stack Engineer. Production AI systems, agentic workflows, RAG pipelines. Next.js, Node.js.",
       },
     ],
   },
@@ -56,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Henry Barefoot — Senior Full-Stack Engineer",
     description:
-      "Production AI infrastructure. $500K+ saved on ops. 95% pipeline efficiency. Next.js · Node.js · MCP.",
+      "Production AI systems, owned end to end — agentic workflows, RAG pipelines, automation. Next.js · Node.js · MCP.",
     images: [OG_IMAGE],
   },
   robots: {
@@ -80,7 +93,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geist.variable} scroll-smooth antialiased`}>
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${hankenGrotesk.variable} ${jetbrainsMono.variable} scroll-smooth antialiased`}
+    >
       <head>
         {/* Plausible analytics — no-op until NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set */}
         {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ? (
@@ -91,11 +107,8 @@ export default function RootLayout({
           />
         ) : null}
       </head>
-      <body className="min-h-full bg-zinc-950 text-zinc-300">
-        <PostHogProvider>
-          <PostHogPageView />
-          {children}
-        </PostHogProvider>
+      <body className="min-h-full bg-[#0a0c0f] text-[#e8eaed]">
+        <PostHogProvider>{children}</PostHogProvider>
       </body>
     </html>
   );

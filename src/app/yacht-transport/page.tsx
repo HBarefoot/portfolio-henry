@@ -138,8 +138,8 @@ function Challenges() {
     <div className="space-y-6 text-sm leading-relaxed text-zinc-500">
       <p>
         Yacht transport is an analog industry. Every broker runs their own spreadsheets and email templates.
-        The hardest problem wasn't technical — it was designing a system that reduced friction without forcing
-        brokers to abandon workflows they'd used for decades.
+        The hardest problem wasn&apos;t technical — it was designing a system that reduced friction without forcing
+        brokers to abandon workflows they&apos;d used for decades.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <ChallengeCard

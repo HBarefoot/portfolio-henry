@@ -1,490 +1,857 @@
-import { Fragment } from "react";
 import Link from "next/link";
-import { RevealOnScroll } from "./components/RevealOnScroll";
+import type { CSSProperties } from "react";
+import AgentConsole from "./components/AgentConsole";
+import HeroBackdrop from "./components/HeroBackdrop";
+import ExperienceTimeline from "./components/ExperienceTimeline";
+import StoryArc from "./components/StoryArc";
+import SpotlightLink from "./components/SpotlightLink";
 
-/* ─────────────────── Inline Icons ─────────────────── */
-function ChevronDown(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-}
+const RESUME = "/Henry_Barefoot_Resume.pdf";
+const EMAIL = "henrybarefoot1987@gmail.com";
+const GITHUB = "https://github.com/HBarefoot";
+const LINKEDIN = "https://www.linkedin.com/in/hbarefoot/";
 
-function ExternalArrow() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M7 17L17 7" />
-      <path d="M7 7h10v10" />
-    </svg>
-  );
-}
-
-function ArrowRight() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14" />
-      <path d="M12 5l7 7-7 7" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-10 6L2 7" />
-    </svg>
-  );
-}
-
-function GitHubIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-    >
-      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.16c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.77.11 3.06.74.8 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.35.78 1.05.78 2.11v3.13c0 .31.21.68.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z" />
-    </svg>
-  );
-}
-
-function LinkedInIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-    >
-      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.28V1.72C24 .77 23.21 0 22.22 0Z" />
-    </svg>
-  );
-}
-
-function DownloadIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
-    </svg>
-  );
-}
-
-/* ─────────────────── Data ─────────────────── */
-const STATS = [
-  { value: "8+", label: "years shipping production web + AI systems" },
-  { value: "15+", label: "ports live on the Allied platform" },
-  { value: "Days → minutes", label: "quote turnaround at Allied Yacht Transport" },
-  { value: "226", label: "tests behind Engram v1.5.3 (open-source, MIT)" },
-];
-
-const PROJECTS = [
-  {
-    year: "2025",
-    role: "Director of Technology",
-    title: "Allied — AI-powered yacht transport platform",
-    for_: "Allied Yacht Transport · 15+ international ports",
-    built:
-      "Three Claude-powered agents (visitor/member/admin) with human-in-the-loop approval. Dynamic pricing + routing engine. Secure admin dashboard with RBAC.",
-    outcome: "Days → minutes quote turnaround across 15+ international ports. $500K+ saved on ops in year one.",
-    links: [
-      { label: "Case study", href: "#allied" },
-      { label: "Talk", href: "mailto:henrybarefoot1987@gmail.com?subject=Allied%20case%20study" },
-    ],
-    stack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "n8n", "Claude API", "Tailwind CSS", "Vercel"],
-  },
-  {
-    year: "2024–25",
-    role: "Author & maintainer",
-    title: "Engram — MCP memory layer for AI agents",
-    for_: "AI engineers running multi-agent systems",
-    built:
-      "Open-source Model Context Protocol server that gives agents persistent, queryable memory across sessions. Single-process Node.js + SQLite + FTS5 + local embeddings — zero Docker, Postgres, or Qdrant dependencies. Works with Claude Desktop, Claude Code, Cursor, n8n, and any MCP client.",
-    outcome: "v1.5.3 in production · 226 tests · MIT-licensed · GitHub Sponsors · listed in 6 MCP-server directories.",
-    links: [
-      { label: "GitHub", href: "https://github.com/HBarefoot/engram" },
-      { label: "NPM", href: "https://www.npmjs.com/package/engram-mcp" },
-    ],
-    stack: ["Node.js", "TypeScript", "SQLite (FTS5)", "MCP", "Xenova"],
-  },
-  {
-    year: "2025–26",
-    role: "Founder & builder",
-    title: "Paw — personal AI orchestrator",
-    for_: "Barefoot Digital",
-    built:
-      "Bun + TypeScript kernel; multi-provider (Claude, OpenAI, Ollama, Gemini); plugin + MCP system; hybrid vector + FTS memory (SQLite + sqlite-vec); cron, web UI (Hono/JSX), and a Slack orchestrator that routes to specialist sub-agents.",
-    outcome: "Runs Henry's pipeline + ops in Slack; white-labeled into ConstructAI.",
-    links: [
-      { label: "Live", href: "https://paw.henrybarefoot.com" },
-    ],
-    stack: ["Bun", "TypeScript", "Hono", "SQLite", "MCP", "Claude API"],
-  },
-];
-
-const STACK = {
-  Languages: ["TypeScript", "JavaScript", "Python", "SQL"],
-  Frameworks: ["Next.js", "React", "Node.js", "Express", "FastAPI"],
-  Data: ["PostgreSQL", "SQLite", "Redis", "Prisma"],
-  AI: ["MCP", "OpenAI", "Anthropic", "Ollama", "n8n"],
-  Infra: ["Vercel", "GitHub Pages", "Cloudflare", "Docker"],
+const chip: CSSProperties = {
+  fontSize: 11,
+  color: "#9aa3ad",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: 5,
+  padding: "4px 9px",
 };
 
-const WORK_STYLE = [
-  {
-    title: "Senior IC, not a manager",
-    body:
-      "I architect, write the code, deploy it, and own it in production. When I'm done, the system has a single throat to choke and that throat is me.",
-  },
-  {
-    title: "Outcomes over features",
-    body:
-      "I don't ship to look busy. Every line is in service of a number on a dashboard — $ saved, hours returned, errors cut, leads closed.",
-  },
-  {
-    title: "Boring tech, sharp execution",
-    body:
-      "Postgres. TypeScript. A static export. I pick tools that survive on-call at 2am over tools that look good in a blog post.",
-  },
-  {
-    title: "Tell me what's actually broken",
-    body:
-      "I work best with founders and directors who'll be straight with me about constraints, and with teams that want senior judgment, not junior obedience.",
-  },
-];
+const stackTag: CSSProperties = {
+  fontSize: 13.5,
+  color: "#d6dbe0",
+  background: "rgba(255,255,255,0.04)",
+  borderRadius: 6,
+  padding: "5px 11px",
+};
 
-/* ─────────────────── Page ─────────────────── */
+const aiTag: CSSProperties = {
+  fontSize: 13.5,
+  color: "#e8eaed",
+  background: "color-mix(in oklab, var(--accent, #57b0e8) 16%, transparent)",
+  borderRadius: 6,
+  padding: "5px 11px",
+};
+
+const kicker: CSSProperties = {
+  fontSize: 11,
+  letterSpacing: "0.18em",
+  textTransform: "uppercase",
+  color: "var(--accent, #57b0e8)",
+  marginBottom: 16,
+};
+
+const sectionTitle: CSSProperties = {
+  fontWeight: 600,
+  fontSize: "clamp(28px, 3.6vw, 42px)",
+  lineHeight: 1.08,
+  letterSpacing: "-0.02em",
+  color: "#f4f6f8",
+  margin: 0,
+};
+
+const cellLabel: CSSProperties = {
+  fontSize: 10.5,
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+  color: "#5b6571",
+  marginBottom: 14,
+};
+
 export default function Home() {
+  const year = new Date().getFullYear();
+
   return (
-    <Fragment>
+    <div
+      style={
+        {
+          "--accent": "#57b0e8",
+          background: "#0a0c0f",
+          color: "#e8eaed",
+          minHeight: "100vh",
+          overflowX: "hidden",
+        } as CSSProperties
+      }
+    >
       {/* ─────────────── NAV ─────────────── */}
-      <nav className="sticky top-0 z-50 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link
-            href="/"
-            className="font-mono text-sm font-semibold tracking-tight text-zinc-100"
-          >
-            henry<span className="text-violet-400">.</span>barefoot
-          </Link>
-          <div className="flex items-center gap-5 text-sm text-zinc-400">
-            <a href="#work" className="hidden hover:text-zinc-100 sm:inline">
+      <nav
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          backdropFilter: "blur(14px)",
+          background: "rgba(10,12,15,0.72)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1120,
+            margin: "0 auto",
+            padding: "0 32px",
+            height: 64,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <a href="#top" style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+            <span
+              className="font-display"
+              style={{ fontWeight: 600, fontSize: 15, letterSpacing: "-0.01em", color: "#f4f6f8" }}
+            >
+              Henry Barefoot
+            </span>
+            <span
+              className="font-mono"
+              style={{ fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "#5b6571" }}
+            >
+              SR. ENGINEER
+            </span>
+          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+            <a href="#work" className="nav-link hidden sm:inline" style={{ fontSize: 13.5 }}>
               Work
             </a>
-            <a href="#stack" className="hidden hover:text-zinc-100 sm:inline">
+            <a href="#oss" className="nav-link hidden sm:inline" style={{ fontSize: 13.5 }}>
+              Open source
+            </a>
+            <a href="#stack" className="nav-link hidden sm:inline" style={{ fontSize: 13.5 }}>
               Stack
             </a>
-            <a href="#approach" className="hidden hover:text-zinc-100 sm:inline">
-              Approach
-            </a>
             <a
-              href="mailto:henrybarefoot1987@gmail.com?subject=Interview%20for%20%5Brole%5D"
-              className="inline-flex items-center gap-1.5 rounded-md border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 font-medium text-violet-200 transition-colors hover:border-violet-400 hover:bg-violet-500/20 hover:text-white"
+              href="#contact"
+              className="btn-accent"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#0a0c0f",
+                background: "var(--accent, #57b0e8)",
+                padding: "8px 15px",
+                borderRadius: 7,
+              }}
             >
-              <MailIcon />
-              <span>Hire me</span>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0a0c0f", opacity: 0.55 }} />
+              Get in touch
             </a>
           </div>
         </div>
       </nav>
 
       {/* ─────────────── HERO ─────────────── */}
-      <header className="relative">
-        <div className="mx-auto max-w-5xl px-6 pt-20 pb-16 sm:pt-32 sm:pb-24">
-          <RevealOnScroll>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-xs font-medium text-emerald-300">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              Open to senior contract or W-2 roles · fully remote · Plantation, FL
+      <header id="top" style={{ position: "relative", overflow: "hidden" }}>
+        <HeroBackdrop />
+        <div style={{ position: "relative", maxWidth: 1120, margin: "0 auto", padding: "96px 32px 80px" }}>
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-14 items-start">
+            {/* left: statement */}
+            <div>
+              <div
+                className="font-mono"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 9,
+                  fontSize: 11,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "#7e8893",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 999,
+                  padding: "6px 13px",
+                  marginBottom: 30,
+                  animation: "hbup .75s cubic-bezier(.22,.61,.36,1) both",
+                  animationDelay: ".05s",
+                }}
+              >
+                <span style={{ position: "relative", display: "inline-flex", width: 7, height: 7 }}>
+                  <span
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      borderRadius: "50%",
+                      background: "#5fd0a0",
+                      animation: "hbpulse 2.4s ease-in-out infinite",
+                    }}
+                  />
+                </span>
+                Available · Senior contract / W-2 · Remote
+              </div>
+
+              <h1
+                className="font-display"
+                style={{
+                  fontWeight: 600,
+                  fontSize: "clamp(40px, 5.4vw, 72px)",
+                  lineHeight: 1.02,
+                  letterSpacing: "-0.025em",
+                  color: "#f6f8fa",
+                  margin: 0,
+                  animation: "hbup .8s cubic-bezier(.22,.61,.36,1) both",
+                  animationDelay: ".14s",
+                }}
+              >
+                I build production
+                <br />
+                AI systems — and
+                <br />
+                own them <span style={{ color: "var(--accent, #57b0e8)" }}>end&nbsp;to&nbsp;end</span>.
+              </h1>
+
+              <p
+                style={{
+                  maxWidth: 560,
+                  margin: "28px 0 0",
+                  fontSize: 18,
+                  lineHeight: 1.62,
+                  color: "#9aa3ad",
+                  animation: "hbup .8s cubic-bezier(.22,.61,.36,1) both",
+                  animationDelay: ".24s",
+                }}
+              >
+                Senior full-stack engineer, 8+ years. I architect, write, deploy, and operate agentic systems, RAG
+                pipelines, and the automation that ties a business together — most recently as{" "}
+                <span style={{ color: "#d6dbe0" }}>Director of Technology at Allied Yacht Transport</span>.
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: 12,
+                  marginTop: 36,
+                  animation: "hbup .8s cubic-bezier(.22,.61,.36,1) both",
+                  animationDelay: ".34s",
+                }}
+              >
+                <a
+                  href="#contact"
+                  className="btn-accent"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 9,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: "#0a0c0f",
+                    background: "var(--accent, #57b0e8)",
+                    padding: "13px 22px",
+                    borderRadius: 8,
+                  }}
+                >
+                  Get in touch
+                  <span className="font-mono">→</span>
+                </a>
+                <a
+                  href={RESUME}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-ghost"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 9,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#d6dbe0",
+                    background: "transparent",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    padding: "13px 22px",
+                    borderRadius: 8,
+                  }}
+                >
+                  Resume (PDF)
+                </a>
+                <a
+                  href="#work"
+                  className="link-soft"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    padding: "13px 8px",
+                  }}
+                >
+                  See the work
+                  <span className="font-mono" style={{ fontSize: 12 }}>
+                    ↓
+                  </span>
+                </a>
+              </div>
             </div>
-          </RevealOnScroll>
 
-          <RevealOnScroll delay={80}>
-            <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight text-zinc-50 sm:text-6xl md:text-7xl">
-              I build production AI infrastructure
-              <br />
-              <span className="bg-gradient-to-r from-violet-300 via-violet-400 to-emerald-300 bg-clip-text text-transparent">
-                and the systems that ship it.
-              </span>
-            </h1>
-          </RevealOnScroll>
-
-          <RevealOnScroll delay={160}>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
-              Senior full-stack engineer. 8+ years shipping{" "}
-              <span className="text-zinc-200">production web + AI systems</span> — MCP servers,
-              agentic orchestration, and ops automation — for logistics and fintech
-              teams that needed it yesterday. Most recent role: Director of
-              Technology at Allied Yacht Transport.
-            </p>
-          </RevealOnScroll>
-
-          <RevealOnScroll delay={240}>
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <a
-                href="mailto:henrybarefoot1987@gmail.com?subject=Interview%20for%20%5Brole%5D"
-                className="inline-flex items-center gap-2 rounded-md bg-violet-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-400 hover:shadow-violet-400/30"
+            {/* right: live agent console + facts */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                animation: "hbslide .85s cubic-bezier(.22,.61,.36,1) both",
+                animationDelay: ".28s",
+              }}
+            >
+              <AgentConsole />
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 1,
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10,
+                  overflow: "hidden",
+                }}
               >
-                Email me directly
-                <ArrowRight />
-              </a>
-              <a
-                href="/Henry_Barefoot_Resume.pdf"
-                className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900/50 px-5 py-3 text-sm font-semibold text-zinc-100 transition-colors hover:border-zinc-500 hover:bg-zinc-900"
-              >
-                <DownloadIcon />
-                Resume (PDF)
-              </a>
-              <a
-                href="#work"
-                className="inline-flex items-center gap-2 px-3 py-3 text-sm font-medium text-zinc-400 transition-colors hover:text-zinc-100"
-              >
-                See the work
-                <ChevronDown />
-              </a>
+                {[
+                  ["Recent", "Allied Yacht Transport"],
+                  ["Building", "Engram · Paw"],
+                  ["Based", "Miami, FL · Remote"],
+                  ["Langs", "EN / ES"],
+                ].map(([label, value]) => (
+                  <div key={label} style={{ background: "#0a0c0f", padding: "12px 14px" }}>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 9.5,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "#5b6571",
+                        marginBottom: 5,
+                      }}
+                    >
+                      {label}
+                    </div>
+                    <div style={{ fontSize: 13, color: "#d6dbe0" }}>{value}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </RevealOnScroll>
+          </div>
         </div>
       </header>
 
-      {/* ─────────────── STATS BAND ─────────────── */}
-      <section className="border-y border-zinc-800/60 bg-zinc-900/30">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-px bg-zinc-800/40 sm:grid-cols-2 lg:grid-cols-4">
-          {STATS.map((s, i) => (
-            <RevealOnScroll key={s.label} delay={i * 80}>
-              <div className="bg-zinc-950 p-8">
-                <div className="font-mono text-3xl font-semibold text-emerald-300 sm:text-4xl">
-                  {s.value}
+      {/* ─────────────── SELECTED WORK ─────────────── */}
+      <section id="work" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "92px 32px" }}>
+          <div data-reveal style={{ marginBottom: 56, maxWidth: 640 }}>
+            <div className="font-mono" style={kicker}>
+              01 — Selected work
+            </div>
+            <h2 className="font-display" style={sectionTitle}>
+              What I&apos;ve shipped, and what it produced.
+            </h2>
+            <p style={{ margin: "18px 0 0", fontSize: 16.5, lineHeight: 1.6, color: "#9aa3ad" }}>
+              Four systems I architected and ran end to end. Every one is in production or open source today.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* 01 Allied */}
+            <article
+              data-reveal
+              className="work-row"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "64px minmax(0,1fr)",
+                gap: 28,
+                padding: "36px 0 36px 16px",
+                marginLeft: -16,
+                borderTop: "1px solid rgba(255,255,255,0.09)",
+              }}
+            >
+              <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
+                01
+              </div>
+              <div>
+                <div
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "#7e8893",
+                    marginBottom: 8,
+                  }}
+                >
+                  2025–26 · Director of Technology
                 </div>
-                <div className="mt-2 text-sm leading-snug text-zinc-500">
-                  {s.label}
+                <h3
+                  className="font-display"
+                  style={{ fontWeight: 600, fontSize: 24, letterSpacing: "-0.01em", color: "#f4f6f8", margin: 0 }}
+                >
+                  Allied Yacht Transport — AI logistics platform
+                </h3>
+                <p style={{ margin: "16px 0 0", maxWidth: 720, fontSize: 15.5, lineHeight: 1.62, color: "#9aa3ad" }}>
+                  Led the end-to-end architecture and build of an AI-powered yacht-transport platform: three
+                  specialized Claude-powered agents (visitor, member, internal admin) with human-in-the-loop approval
+                  gates, plus dynamic pricing and routing engines handling weight, insurance, and compliance logic.
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    gap: "10px 22px",
+                    marginTop: 18,
+                  }}
+                >
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 9, fontSize: 14, color: "#e8eaed" }}>
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "var(--accent, #57b0e8)",
+                      }}
+                    >
+                      Outcome
+                    </span>
+                    Quote turnaround cut from <span style={{ color: "#fff", fontWeight: 600 }}>days to minutes</span>{" "}
+                    across 15+ international ports.
+                  </span>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 20 }}>
+                  {["Next.js", "TypeScript", "Node.js", "PostgreSQL", "n8n", "Claude API"].map((t) => (
+                    <span key={t} className="font-mono" style={chip}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div style={{ marginTop: 20 }}>
+                  <Link href="/yacht-transport" className="link-accent font-mono" style={{ fontSize: 13.5 }}>
+                    Case study →
+                  </Link>
                 </div>
               </div>
-            </RevealOnScroll>
-          ))}
+            </article>
+
+            {/* 02 Engram */}
+            <article
+              data-reveal
+              className="work-row"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "64px minmax(0,1fr)",
+                gap: 28,
+                padding: "36px 0 36px 16px",
+                marginLeft: -16,
+                borderTop: "1px solid rgba(255,255,255,0.09)",
+              }}
+            >
+              <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
+                02
+              </div>
+              <div>
+                <div
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "#7e8893",
+                    marginBottom: 8,
+                  }}
+                >
+                  2024– · Author &amp; maintainer
+                </div>
+                <h3
+                  className="font-display"
+                  style={{ fontWeight: 600, fontSize: 24, letterSpacing: "-0.01em", color: "#f4f6f8", margin: 0 }}
+                >
+                  Engram — persistent memory layer for AI agents
+                </h3>
+                <p style={{ margin: "16px 0 0", maxWidth: 720, fontSize: 15.5, lineHeight: 1.62, color: "#9aa3ad" }}>
+                  Open-source MCP server giving agents cross-session memory — for Claude Desktop, Claude Code, Cursor,
+                  n8n, and any MCP-compatible client. A single-process Node.js + SQLite (FTS5) + local-embeddings
+                  architecture: zero Docker, Postgres, or Qdrant dependencies.
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "10px 22px",
+                    marginTop: 18,
+                    fontSize: 14,
+                    color: "#d6dbe0",
+                  }}
+                >
+                  {["v1.5.3", "226 tests", "MIT", "GitHub Sponsors", "6 MCP directories"].map((t) => (
+                    <span key={t} className="font-mono" style={{ fontSize: 12.5, color: "#9aa3ad" }}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 18, marginTop: 20 }}>
+                  <a
+                    href={`${GITHUB}/engram`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-accent"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 13.5 }}
+                  >
+                    GitHub{" "}
+                    <span className="font-mono" style={{ fontSize: 11 }}>
+                      ↗
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            {/* 03 Paw */}
+            <article
+              data-reveal
+              className="work-row"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "64px minmax(0,1fr)",
+                gap: 28,
+                padding: "36px 0 36px 16px",
+                marginLeft: -16,
+                borderTop: "1px solid rgba(255,255,255,0.09)",
+              }}
+            >
+              <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
+                03
+              </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                  <span
+                    className="font-mono"
+                    style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#7e8893" }}
+                  >
+                    2026 · Solo build
+                  </span>
+                  <span
+                    className="font-mono"
+                    style={{
+                      fontSize: 10,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: "var(--accent, #57b0e8)",
+                      border: "1px solid color-mix(in oklab, var(--accent, #57b0e8) 45%, transparent)",
+                      borderRadius: 999,
+                      padding: "2px 8px",
+                    }}
+                  >
+                    New
+                  </span>
+                </div>
+                <h3
+                  className="font-display"
+                  style={{ fontWeight: 600, fontSize: 24, letterSpacing: "-0.01em", color: "#f4f6f8", margin: 0 }}
+                >
+                  Paw — autonomous engineering agent
+                </h3>
+                <p style={{ margin: "16px 0 0", maxWidth: 720, fontSize: 15.5, lineHeight: 1.62, color: "#9aa3ad" }}>
+                  A self-directed agent that plans, executes, and verifies multi-step engineering tasks against a real
+                  codebase — pairing the Engram memory layer with tool-use and human approval checkpoints. Built to take
+                  a goal and drive it to a working, tested result.
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 20 }}>
+                  {["TypeScript", "MCP", "Claude API", "Engram"].map((t) => (
+                    <span key={t} className="font-mono" style={chip}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </article>
+
+            {/* 04 Frutero */}
+            <article
+              data-reveal
+              className="work-row"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "64px minmax(0,1fr)",
+                gap: 28,
+                padding: "36px 0 36px 16px",
+                marginLeft: -16,
+                borderTop: "1px solid rgba(255,255,255,0.09)",
+                borderBottom: "1px solid rgba(255,255,255,0.09)",
+              }}
+            >
+              <div className="font-mono" style={{ fontSize: 13, color: "#5b6571", paddingTop: 5 }}>
+                04
+              </div>
+              <div>
+                <div
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "#7e8893",
+                    marginBottom: 8,
+                  }}
+                >
+                  Solo build · Open source
+                </div>
+                <h3
+                  className="font-display"
+                  style={{ fontWeight: 600, fontSize: 24, letterSpacing: "-0.01em", color: "#f4f6f8", margin: 0 }}
+                >
+                  Frutero — Raspberry Pi controller with AI advisor
+                </h3>
+                <p style={{ margin: "16px 0 0", maxWidth: 720, fontSize: 15.5, lineHeight: 1.62, color: "#9aa3ad" }}>
+                  Local-first controller for monotub fruiting chambers, with a Claude/Ollama-powered advisor that
+                  detects contamination from sensor and camera data. GPIO hardware control, live camera streaming,
+                  smart-mist safety clamps, multi-channel alerts, and a tiered SaaS dashboard.
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 20 }}>
+                  {["Raspberry Pi GPIO", "Node.js", "Claude / Ollama", "systemd · TLS"].map((t) => (
+                    <span key={t} className="font-mono" style={chip}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
-      {/* ─────────────── SELECTED WORK ─────────────── */}
-      <section id="work" className="py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-6">
-          <RevealOnScroll>
-            <div className="mb-12">
-              <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
-                Selected work
-              </div>
-              <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
-                What I&apos;ve shipped, and what it produced.
-              </h2>
-              <p className="mt-3 max-w-2xl text-zinc-400">
-                Every project below has a real number attached. If you want the
-                full case study on any of them, my inbox is open.
-              </p>
+      {/* ─────────────── EXPERIENCE ─────────────── */}
+      <section id="experience" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "92px 32px" }}>
+          <div data-reveal style={{ marginBottom: 40, maxWidth: 680 }}>
+            <div className="font-mono" style={kicker}>
+              02 — Experience
             </div>
-          </RevealOnScroll>
+            <h2 className="font-display" style={sectionTitle}>
+              How I got here.
+            </h2>
+            <p style={{ margin: "18px 0 0", fontSize: 16.5, lineHeight: 1.6, color: "#9aa3ad" }}>
+              From automating the inbox to architecting autonomous systems — the path in six steps. Press play, or
+              scrub the timeline.
+            </p>
+          </div>
 
-          <div className="space-y-6">
-            {PROJECTS.map((p, i) => (
-              <RevealOnScroll key={p.title} delay={i * 60}>
-                <article className="group relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/40 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/70 sm:p-8">
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <div>
-                      <div className="font-mono text-xs uppercase tracking-widest text-zinc-500">
-                        {p.year} · {p.role}
-                      </div>
-                      <h3 className="mt-1 text-xl font-semibold text-zinc-50 sm:text-2xl">
-                        {p.title}
-                      </h3>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {p.stack.map((s) => (
-                        <span
-                          key={s}
-                          className="rounded border border-zinc-800 bg-zinc-950/50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-zinc-400"
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+          <div data-reveal style={{ marginBottom: 72 }}>
+            <StoryArc />
+          </div>
 
-                  <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
-                    <div>
-                      <dt className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                        For
-                      </dt>
-                      <dd className="mt-1 text-sm leading-relaxed text-zinc-300">
-                        {p.for_}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                        Built
-                      </dt>
-                      <dd className="mt-1 text-sm leading-relaxed text-zinc-300">
-                        {p.built}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="font-mono text-[10px] uppercase tracking-widest text-emerald-400">
-                        Outcome
-                      </dt>
-                      <dd className="mt-1 text-sm font-medium leading-relaxed text-zinc-100">
-                        {p.outcome}
-                      </dd>
-                    </div>
-                  </dl>
+          <div
+            className="font-mono"
+            style={{
+              fontSize: 11,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "#5b6571",
+              marginBottom: 16,
+            }}
+          >
+            Full history
+          </div>
+          <ExperienceTimeline />
+        </div>
+      </section>
 
-                  {p.links.length > 0 && (
-                    <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-zinc-800/60 pt-4">
-                      {p.links.map((l) => (
-                        <a
-                          key={l.href}
-                          href={l.href}
-                          target={
-                            l.href.startsWith("http") ? "_blank" : undefined
-                          }
-                          rel={
-                            l.href.startsWith("http")
-                              ? "noopener noreferrer"
-                              : undefined
-                          }
-                          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 underline-offset-4 transition-colors hover:text-emerald-300 hover:underline"
-                        >
-                          {l.label}
-                          <ExternalArrow />
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </article>
-              </RevealOnScroll>
-            ))}
+      {/* ─────────────── OPEN SOURCE ─────────────── */}
+      <section id="oss" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.012)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "92px 32px" }}>
+          <div data-reveal style={{ marginBottom: 48, maxWidth: 640 }}>
+            <div className="font-mono" style={kicker}>
+              03 — Open source
+            </div>
+            <h2 className="font-display" style={sectionTitle}>
+              Tools I maintain in public.
+            </h2>
+            <p style={{ margin: "18px 0 0", fontSize: 16.5, lineHeight: 1.6, color: "#9aa3ad" }}>
+              MIT-licensed infrastructure for the agent ecosystem — used by other engineers, not just me.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Engram card */}
+            <SpotlightLink href={`${GITHUB}/engram`}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span className="font-mono" style={{ fontSize: 13, color: "#d6dbe0" }}>
+                  HBarefoot / engram
+                </span>
+                <span className="font-mono" style={{ fontSize: 11, color: "#5b6571" }}>
+                  ↗
+                </span>
+              </div>
+              <p style={{ margin: "14px 0 0", fontSize: 14.5, lineHeight: 1.58, color: "#9aa3ad" }}>
+                Persistent MCP memory layer for AI agents. Single-process Node.js + SQLite (FTS5) + local embeddings.
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 14,
+                  marginTop: 18,
+                  paddingTop: 16,
+                  borderTop: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
+                {["● TypeScript", "MIT", "226 tests", "v1.5.3"].map((t) => (
+                  <span key={t} className="font-mono" style={{ fontSize: 11.5, color: "#7e8893" }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </SpotlightLink>
+
+            {/* Paw card */}
+            <SpotlightLink href={GITHUB} dataRd="1">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span className="font-mono" style={{ fontSize: 13, color: "#d6dbe0" }}>
+                  HBarefoot / paw
+                </span>
+                <span
+                  className="font-mono"
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "var(--accent, #57b0e8)",
+                    border: "1px solid color-mix(in oklab, var(--accent, #57b0e8) 45%, transparent)",
+                    borderRadius: 999,
+                    padding: "2px 8px",
+                  }}
+                >
+                  New
+                </span>
+              </div>
+              <p style={{ margin: "14px 0 0", fontSize: 14.5, lineHeight: 1.58, color: "#9aa3ad" }}>
+                Autonomous engineering agent — plans, executes, and verifies multi-step tasks with memory and approval
+                gates.
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 14,
+                  marginTop: 18,
+                  paddingTop: 16,
+                  borderTop: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
+                {["● TypeScript", "MCP", "Claude API"].map((t) => (
+                  <span key={t} className="font-mono" style={{ fontSize: 11.5, color: "#7e8893" }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </SpotlightLink>
           </div>
         </div>
       </section>
 
       {/* ─────────────── STACK ─────────────── */}
-      <section id="stack" className="border-t border-zinc-800/60 py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-6">
-          <RevealOnScroll>
-            <div className="mb-12">
-              <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
-                Stack
-              </div>
-              <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
-                What I reach for.
-              </h2>
+      <section id="stack" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "92px 32px" }}>
+          <div data-reveal style={{ marginBottom: 48, maxWidth: 640 }}>
+            <div className="font-mono" style={kicker}>
+              04 — Capabilities
             </div>
-          </RevealOnScroll>
+            <h2 className="font-display" style={sectionTitle}>
+              What I reach for.
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-zinc-800 bg-zinc-800 sm:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(STACK).map(([category, items], i) => (
-              <RevealOnScroll key={category} delay={i * 60}>
-                <div className="h-full bg-zinc-950 p-6">
-                  <div className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                    {category}
-                  </div>
-                  <ul className="mt-3 flex flex-wrap gap-2">
-                    {items.map((item) => (
-                      <li
-                        key={item}
-                        className="rounded border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 text-sm text-zinc-200"
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+          <div
+            data-reveal
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            style={{
+              gap: 1,
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 12,
+              overflow: "hidden",
+            }}
+          >
+            {[
+              { label: "Languages", items: ["TypeScript", "JavaScript", "Node.js", "Python", "PHP", "SQL"] },
+              { label: "Frontend", items: ["Next.js", "React", "Tailwind", "shadcn/ui", "Framer Motion"] },
+              { label: "Backend", items: ["Express", "REST", "GraphQL", "WebSockets", "OAuth 2.0"] },
+              { label: "Data", items: ["PostgreSQL", "MongoDB", "SQLite (FTS5)", "BigQuery"] },
+              {
+                label: "AI / LLM",
+                accent: true,
+                items: ["Claude API", "MCP", "RAG pipelines", "LangChain", "Ollama", "Local embeddings"],
+              },
+              { label: "Automation & DevOps", items: ["n8n", "Stripe", "Docker", "Vercel", "AWS", "GitHub Actions"] },
+            ].map((cat) => (
+              <div key={cat.label} style={{ background: "#0a0c0f", padding: 24 }}>
+                <div
+                  className="font-mono"
+                  style={{ ...cellLabel, color: cat.accent ? "var(--accent, #57b0e8)" : "#5b6571" }}
+                >
+                  {cat.label}
                 </div>
-              </RevealOnScroll>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+                  {cat.items.map((it) => (
+                    <span key={it} style={cat.accent ? aiTag : stackTag}>
+                      {it}
+                    </span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ─────────────── APPROACH ─────────────── */}
-      <section id="approach" className="border-t border-zinc-800/60 py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-6">
-          <RevealOnScroll>
-            <div className="mb-12">
-              <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
-                Approach
-              </div>
-              <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
-                How I work.
-              </h2>
-              <p className="mt-3 max-w-2xl text-zinc-400">
-                If you&apos;re hiring, here&apos;s the working style you&apos;re
-                signing up for.
-              </p>
+      <section style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "92px 32px" }}>
+          <div data-reveal style={{ marginBottom: 48, maxWidth: 640 }}>
+            <div className="font-mono" style={kicker}>
+              05 — Approach
             </div>
-          </RevealOnScroll>
+            <h2 className="font-display" style={sectionTitle}>
+              How I work.
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {WORK_STYLE.map((w, i) => (
-              <RevealOnScroll key={w.title} delay={i * 80}>
-                <div className="h-full rounded-lg border border-zinc-800 bg-zinc-900/30 p-6 transition-colors hover:border-zinc-700">
-                  <h3 className="text-lg font-semibold text-zinc-50">
-                    {w.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                    {w.body}
-                  </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              {
+                rd: undefined,
+                n: "01",
+                title: "Senior IC, end to end",
+                body:
+                  "I architect, write the code, deploy it, and own it in production. The result has a single, clear point of accountability.",
+              },
+              {
+                rd: "1" as const,
+                n: "02",
+                title: "Outcomes over output",
+                body:
+                  "Every build maps to a number that matters — turnaround cut, hours returned, tools consolidated, revenue unblocked.",
+              },
+              {
+                rd: "2" as const,
+                n: "03",
+                title: "Boring tech, sharp execution",
+                body:
+                  "Postgres, TypeScript, a clean deploy. I pick tools that survive on-call at 2am over tools that look good in a thread.",
+              },
+            ].map((c) => (
+              <div key={c.n} data-reveal data-rd={c.rd}>
+                <div className="font-mono" style={{ fontSize: 12, color: "var(--accent, #57b0e8)", marginBottom: 14 }}>
+                  {c.n}
                 </div>
-              </RevealOnScroll>
+                <h3
+                  className="font-display"
+                  style={{ fontWeight: 600, fontSize: 18, color: "#f4f6f8", margin: "0 0 10px" }}
+                >
+                  {c.title}
+                </h3>
+                <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: "#9aa3ad" }}>{c.body}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -493,72 +860,127 @@ export default function Home() {
       {/* ─────────────── CONTACT ─────────────── */}
       <section
         id="contact"
-        className="border-t border-zinc-800/60 bg-zinc-900/30 py-20 sm:py-28"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.012)" }}
       >
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <RevealOnScroll>
-            <div className="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
-              Contact
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "100px 32px" }}>
+          <div data-reveal style={{ maxWidth: 680 }}>
+            <div className="font-mono" style={{ ...kicker, marginBottom: 18 }}>
+              06 — Contact
             </div>
-            <h2 className="text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
-              Let&apos;s talk.
+            <h2
+              className="font-display"
+              style={{
+                fontWeight: 600,
+                fontSize: "clamp(32px, 4.4vw, 52px)",
+                lineHeight: 1.04,
+                letterSpacing: "-0.025em",
+                color: "#f6f8fa",
+                margin: 0,
+              }}
+            >
+              Let&apos;s build something
+              <br />
+              that ships.
             </h2>
-            <p className="mt-4 text-zinc-400">
-              I read every message myself. If you&apos;re hiring, include the
-              role, the team, and the outcome you&apos;re hiring for. I&apos;ll
-              reply within 24 hours.
+            <p style={{ margin: "22px 0 0", fontSize: 17, lineHeight: 1.6, color: "#9aa3ad" }}>
+              I read every message myself. If you&apos;re hiring, include the role, the team, and the outcome you&apos;re
+              hiring for — I&apos;ll reply within 24 hours.
             </p>
-          </RevealOnScroll>
 
-          <RevealOnScroll delay={120}>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 36 }}>
               <a
-                href="mailto:henrybarefoot1987@gmail.com?subject=Interview%20for%20%5Brole%5D"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-violet-500 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-400 sm:w-auto"
+                href={`mailto:${EMAIL}`}
+                className="btn-accent"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 9,
+                  fontSize: 14.5,
+                  fontWeight: 600,
+                  color: "#0a0c0f",
+                  background: "var(--accent, #57b0e8)",
+                  padding: "14px 22px",
+                  borderRadius: 8,
+                }}
               >
-                <MailIcon />
-                henrybarefoot1987@gmail.com
+                {EMAIL}
               </a>
               <a
-                href="https://github.com/HBarefoot"
+                href={GITHUB}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-950/50 px-6 py-3.5 text-base font-semibold text-zinc-100 transition-colors hover:border-zinc-500 sm:w-auto"
+                className="btn-outline"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 9,
+                  fontSize: 14.5,
+                  fontWeight: 500,
+                  color: "#d6dbe0",
+                  border: "1px solid rgba(255,255,255,0.14)",
+                  padding: "14px 22px",
+                  borderRadius: 8,
+                }}
               >
-                <GitHubIcon />
                 GitHub
               </a>
               <a
-                href="https://www.linkedin.com/in/hbarefoot/"
+                href={LINKEDIN}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-950/50 px-6 py-3.5 text-base font-semibold text-zinc-100 transition-colors hover:border-zinc-500 sm:w-auto"
+                className="btn-outline"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 9,
+                  fontSize: 14.5,
+                  fontWeight: 500,
+                  color: "#d6dbe0",
+                  border: "1px solid rgba(255,255,255,0.14)",
+                  padding: "14px 22px",
+                  borderRadius: 8,
+                }}
               >
-                <LinkedInIcon />
                 LinkedIn
               </a>
             </div>
-          </RevealOnScroll>
 
-          <RevealOnScroll delay={200}>
-            <div className="mt-10 font-mono text-xs uppercase tracking-widest text-zinc-600">
-              Plantation, FL · open to senior contract or W-2 roles · fully remote
+            <div
+              className="font-mono"
+              style={{
+                fontSize: 11,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#5b6571",
+                marginTop: 40,
+              }}
+            >
+              Miami, FL · Remote · Bilingual EN / ES
             </div>
-          </RevealOnScroll>
+          </div>
         </div>
       </section>
 
       {/* ─────────────── FOOTER ─────────────── */}
-      <footer className="border-t border-zinc-800/60">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-zinc-500 sm:flex-row">
-          <div>
-            © {new Date().getFullYear()} Henry Barefoot · Barefoot Digital
-          </div>
-          <div className="font-mono">
-            Built with the Orchestrator Pattern
-          </div>
+      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div
+          style={{
+            maxWidth: 1120,
+            margin: "0 auto",
+            padding: "28px 32px",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
+          <span style={{ fontSize: 12.5, color: "#5b6571" }}>© {year} Henry Barefoot</span>
+          <span className="font-mono" style={{ fontSize: 11, letterSpacing: "0.06em", color: "#5b6571" }}>
+            henrybarefoot.com
+          </span>
         </div>
       </footer>
-    </Fragment>
+    </div>
   );
 }
