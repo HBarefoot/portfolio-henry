@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import posthog from "posthog-js";
+import { usePostHog } from "posthog-js/react";
 import type { ReactNode } from "react";
 
 type TrackedLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -12,8 +12,9 @@ type TrackedLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 export default function TrackedLink({ event, properties, href, children, onClick, className, style, ...rest }: TrackedLinkProps) {
+  const posthog = usePostHog();
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    posthog.capture(event, properties);
+    posthog?.capture(event, properties);
     onClick?.(e);
   };
 
