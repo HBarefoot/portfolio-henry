@@ -190,6 +190,18 @@ a {
   box-shadow: 0 14px 34px -12px color-mix(in oklab, var(--accent, #57b0e8) 70%, transparent);
 }
 
+/* Contact form inputs */
+.lead-input:focus {
+  border-color: color-mix(in oklab, var(--accent, #57b0e8) 60%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #57b0e8) 12%, transparent);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ─────────────── Scroll-driven reveals (progressive enhancement) ─────────────── */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
