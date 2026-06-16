@@ -7,7 +7,18 @@ import { useEffect, type ReactNode } from "react";
 export function PostHogProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-    if (!key) return;
+    if (!key) {
+      if (process.env.NODE_ENV !== "production") {
+        // Surfaces the most common failure mode: the key must be present at BUILD
+        // time (NEXT_PUBLIC vars are inlined). If it's missing in the deployed
+        // build, PostHog never initializes and no $pageview is captured.
+        console.warn(
+          "[PostHog] NEXT_PUBLIC_POSTHOG_KEY is not set — analytics are disabled. " +
+            "Set it in your environment (and in Vercel Production for the live site) and redeploy."
+        );
+      }
+      return;
+    }
 
     posthog.init(key, {
       api_host: "/ingest",
@@ -16,6 +27,7 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
       // usePathname() tracker (which wasn't landing $pageview events).
       capture_pageview: "history_change",
       defaults: "2026-01-30",
+      capture_exceptions: true,
       loaded: (posthog) => {
         if (process.env.NODE_ENV === "development") {
           posthog.debug();

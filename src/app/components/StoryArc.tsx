@@ -128,8 +128,9 @@ export default function StoryArc() {
         </div>
       </div>
 
-      {/* narrating panel */}
+      {/* narrating panel — key on `active` replays the crossfade each chapter change */}
       <div
+        key={active}
         style={{
           display: "grid",
           gridTemplateColumns: "auto 1fr",
@@ -140,6 +141,7 @@ export default function StoryArc() {
           borderRadius: 14,
           background: "linear-gradient(180deg, rgba(255,255,255,0.022), rgba(255,255,255,0))",
           padding: "32px clamp(22px, 3vw, 36px)",
+          animation: "hbfadeup .5s cubic-bezier(.22,.61,.36,1) both",
         }}
       >
         <div

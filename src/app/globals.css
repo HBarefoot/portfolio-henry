@@ -93,6 +93,16 @@ a {
     opacity: 0;
   }
 }
+@keyframes hbfadeup {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* ─────────────── Hover affordances (so the page stays a server component) ─────────────── */
 .nav-link {
@@ -142,11 +152,42 @@ a {
 }
 
 .work-row {
-  transition: box-shadow 0.25s ease, background 0.25s ease;
+  transition: box-shadow 0.25s ease;
 }
 .work-row:hover {
   box-shadow: inset 2px 0 0 var(--accent, #57b0e8);
-  background: rgba(255, 255, 255, 0.015);
+}
+
+/* Tactile capability chips */
+.stack-chip {
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.stack-chip:hover {
+  background: color-mix(in oklab, var(--accent, #57b0e8) 30%, transparent);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Open-source + approach cards: accent border + lift on hover (spotlight bg via [data-spot]) */
+.oss-card,
+.approach-card {
+  transition: border-color 0.2s, transform 0.2s;
+}
+.oss-card:hover,
+.approach-card:hover {
+  border-color: color-mix(in oklab, var(--accent, #57b0e8) 50%, transparent);
+  transform: translateY(-3px);
+}
+.approach-card:hover {
+  border-color: color-mix(in oklab, var(--accent, #57b0e8) 40%, transparent);
+}
+
+/* Contact email button: accent glow on hover (in addition to .btn-accent brightness) */
+.btn-email {
+  transition: filter 0.2s, box-shadow 0.2s;
+}
+.btn-email:hover {
+  box-shadow: 0 14px 34px -12px color-mix(in oklab, var(--accent, #57b0e8) 70%, transparent);
 }
 
 /* ─────────────── Scroll-driven reveals (progressive enhancement) ─────────────── */

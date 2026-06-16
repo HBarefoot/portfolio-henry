@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 /* ── Helpers ── */
 function ArrowLeft() {
@@ -213,6 +214,7 @@ function FooterCTA() {
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-950 px-6 py-3 text-sm text-zinc-300 transition-all hover:border-zinc-500 hover:text-zinc-100"
+          onClick={() => posthog.capture("live_site_clicked", { project: "Allied Yacht Transport" })}
         >
           Visit yachttransport.ai <External />
         </a>
