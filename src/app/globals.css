@@ -219,3 +219,29 @@ a {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ─────────────── Contact form ─────────────── */
+.lead-input:focus {
+  border-color: color-mix(in oklab, var(--accent, #57b0e8) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #57b0e8) 12%, transparent);
+}
+
+.lead-input::placeholder {
+  color: #5b6571;
+}
+
+@keyframes lead-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lead-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(10, 12, 15, 0.3);
+  border-top-color: #0a0c0f;
+  border-radius: 50%;
+  animation: lead-spin 0.7s linear infinite;
+}

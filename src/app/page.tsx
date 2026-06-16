@@ -5,6 +5,7 @@ import ExperienceTimeline from "./components/ExperienceTimeline";
 import StoryArc from "./components/StoryArc";
 import PointerEffects from "./components/PointerEffects";
 import TrackedLink from "./components/TrackedLink";
+import ContactForm from "./components/ContactForm";
 
 const RESUME = "/Henry_Barefoot_Resume.pdf";
 const EMAIL = "henrybarefoot1987@gmail.com";
@@ -1015,103 +1016,124 @@ export default function Home() {
           }}
         />
         <div style={{ position: "relative", maxWidth: 1120, margin: "0 auto", padding: "100px 32px" }}>
-          <div data-reveal style={{ maxWidth: 680 }}>
-            <div className="font-mono" style={{ ...kicker, marginBottom: 18 }}>
-              06 — Contact
-            </div>
-            <h2
-              className="font-display"
-              style={{
-                fontWeight: 600,
-                fontSize: "clamp(32px, 4.4vw, 52px)",
-                lineHeight: 1.04,
-                letterSpacing: "-0.025em",
-                color: "#f6f8fa",
-                margin: 0,
-              }}
-            >
-              Let&apos;s build something
-              <br />
-              that ships.
-            </h2>
-            <p style={{ margin: "22px 0 0", fontSize: 17, lineHeight: 1.6, color: "#9aa3ad" }}>
-              I read every message myself. If you&apos;re hiring, include the role, the team, and the outcome you&apos;re
-              hiring for — I&apos;ll reply within 24 hours.
-            </p>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 36 }}>
-              <TrackedLink
-                event="contact_email_clicked"
-                href={`mailto:${EMAIL}`}
-                data-magnetic=""
-                className="btn-accent btn-email"
+          <div
+            className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr]"
+            style={{ gap: "64px 80px", alignItems: "start" }}
+          >
+            {/* Left: heading + direct links */}
+            <div data-reveal>
+              <div className="font-mono" style={{ ...kicker, marginBottom: 18 }}>
+                06 — Contact
+              </div>
+              <h2
+                className="font-display"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 9,
-                  fontSize: 14.5,
                   fontWeight: 600,
-                  color: "#0a0c0f",
-                  background: "var(--accent, #57b0e8)",
-                  padding: "14px 22px",
-                  borderRadius: 8,
+                  fontSize: "clamp(32px, 4.4vw, 52px)",
+                  lineHeight: 1.04,
+                  letterSpacing: "-0.025em",
+                  color: "#f6f8fa",
+                  margin: 0,
                 }}
               >
-                {EMAIL}
-              </TrackedLink>
-              <TrackedLink
-                event="contact_github_clicked"
-                href={GITHUB}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline"
+                Let&apos;s build something
+                <br />
+                that ships.
+              </h2>
+              <p style={{ margin: "22px 0 0", fontSize: 17, lineHeight: 1.6, color: "#9aa3ad" }}>
+                I read every message myself. If you&apos;re hiring, include the role, the team, and the outcome you&apos;re
+                hiring for — I&apos;ll reply within 24 hours.
+              </p>
+
+              {/* Email takes full width so the long address never wraps */}
+              <div style={{ marginTop: 36 }}>
+                <TrackedLink
+                  event="contact_email_clicked"
+                  href={`mailto:${EMAIL}`}
+                  data-magnetic=""
+                  className="btn-accent btn-email"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 9,
+                    fontSize: 14.5,
+                    fontWeight: 600,
+                    color: "#0a0c0f",
+                    background: "var(--accent, #57b0e8)",
+                    padding: "14px 22px",
+                    borderRadius: 8,
+                    width: "100%",
+                    justifyContent: "center",
+                  }}
+                >
+                  {EMAIL}
+                </TrackedLink>
+                {/* GitHub + LinkedIn always side-by-side below the email */}
+                <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+                  <TrackedLink
+                    event="contact_github_clicked"
+                    href={GITHUB}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 9,
+                      fontSize: 14.5,
+                      fontWeight: 500,
+                      color: "#d6dbe0",
+                      border: "1px solid rgba(255,255,255,0.14)",
+                      padding: "14px 22px",
+                      borderRadius: 8,
+                      flex: 1,
+                    }}
+                  >
+                    GitHub
+                  </TrackedLink>
+                  <TrackedLink
+                    event="contact_linkedin_clicked"
+                    href={LINKEDIN}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 9,
+                      fontSize: 14.5,
+                      fontWeight: 500,
+                      color: "#d6dbe0",
+                      border: "1px solid rgba(255,255,255,0.14)",
+                      padding: "14px 22px",
+                      borderRadius: 8,
+                      flex: 1,
+                    }}
+                  >
+                    LinkedIn
+                  </TrackedLink>
+                </div>
+              </div>
+
+              <div
+                className="font-mono"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 9,
-                  fontSize: 14.5,
-                  fontWeight: 500,
-                  color: "#d6dbe0",
-                  border: "1px solid rgba(255,255,255,0.14)",
-                  padding: "14px 22px",
-                  borderRadius: 8,
+                  fontSize: 11,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#5b6571",
+                  marginTop: 32,
                 }}
               >
-                GitHub
-              </TrackedLink>
-              <TrackedLink
-                event="contact_linkedin_clicked"
-                href={LINKEDIN}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 9,
-                  fontSize: 14.5,
-                  fontWeight: 500,
-                  color: "#d6dbe0",
-                  border: "1px solid rgba(255,255,255,0.14)",
-                  padding: "14px 22px",
-                  borderRadius: 8,
-                }}
-              >
-                LinkedIn
-              </TrackedLink>
+                Miami, FL · Remote · Bilingual EN / ES
+              </div>
             </div>
 
-            <div
-              className="font-mono"
-              style={{
-                fontSize: 11,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#5b6571",
-                marginTop: 40,
-              }}
-            >
-              Miami, FL · Remote · Bilingual EN / ES
+            {/* Right: contact form */}
+            <div data-reveal data-rd="1">
+              <ContactForm />
             </div>
           </div>
         </div>
