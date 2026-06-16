@@ -118,7 +118,7 @@ export default function ContactForm() {
               type="text"
               required
               autoComplete="name"
-              placeholder="Henry Barefoot"
+              placeholder="Jane Doe"
               className="lead-input"
               style={inputStyle}
             />
