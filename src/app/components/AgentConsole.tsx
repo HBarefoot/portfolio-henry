@@ -157,10 +157,11 @@ export default function AgentConsole() {
         </span>
       </div>
 
-      {/* console body */}
+      {/* console body — fixed height (not min-height) so the typing/clearing loop and any
+          mobile text-wrapping can't change the box height and reflow the page below it */}
       <div
         className="font-mono"
-        style={{ padding: "16px 18px", fontSize: 12.5, lineHeight: 1.95, minHeight: 232 }}
+        style={{ padding: "16px 18px", fontSize: 12.5, lineHeight: 1.95, height: 232, overflow: "hidden" }}
       >
         {shown.map((line, idx) => (
           <Row key={idx} line={line} />
