@@ -22,6 +22,10 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
 
     posthog.init(key, {
       api_host: "/ingest",
+      // App host for the PostHog Toolbar / "open in PostHog" links. Without it
+      // the Toolbar can't resolve the relative reverse-proxy api_host above and
+      // rejects it ("Invalid api_host"). Ingestion still flows through /ingest.
+      ui_host: "https://us.posthog.com",
       // Automatic pageview capture on history API changes — covers the initial
       // load and Next.js App Router client navigations. Replaces the old manual
       // usePathname() tracker (which wasn't landing $pageview events).
