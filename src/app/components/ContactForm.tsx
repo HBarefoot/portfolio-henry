@@ -1,8 +1,11 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { usePostHog } from "posthog-js/react";
 import { submitLead, type LeadResult } from "../actions/submitLead";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -29,6 +32,13 @@ const labelStyle: React.CSSProperties = {
 export default function ContactForm() {
   const posthog = usePostHog();
   const [state, action, isPending] = useActionState<LeadResult | null, FormData>(submitLead, null);
+  // Page-load time — the server rejects submissions faster than ~3s (bots).
+  // Stamp the uncontrolled hidden input after mount; stays "0" if JS is off,
+  // which the server treats as "no timing data" (skips the check).
+  const tsInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (tsInputRef.current) tsInputRef.current.value = String(Date.now());
+  }, []);
 
   useEffect(() => {
     if (state?.ok) {
@@ -88,6 +98,9 @@ export default function ContactForm() {
         aria-hidden="true"
         style={{ position: "absolute", left: -9999, width: 1, height: 1, overflow: "hidden" }}
       />
+
+      {/* Timing field — page-load timestamp, checked server-side */}
+      <input type="hidden" name="ts" defaultValue="0" ref={tsInputRef} />
 
       {state && !state.ok && (
         <div
@@ -184,6 +197,13 @@ export default function ContactForm() {
             style={{ ...inputStyle, resize: "vertical", minHeight: 100 }}
           />
         </div>
+
+        {/* Cloudflare Turnstile — invisible bot check; injects a hidden
+            cf-turnstile-response input the server verifies. Rendered only when
+            a site key is configured so local dev without keys still works. */}
+        {TURNSTILE_SITE_KEY && (
+          <Turnstile siteKey={TURNSTILE_SITE_KEY} options={{ size: "flexible", theme: "dark" }} />
+        )}
 
         <button
           type="submit"
