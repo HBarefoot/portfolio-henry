@@ -117,6 +117,30 @@ export async function submitLead(_prev: LeadResult | null, form: FormData): Prom
     return { ok: false, error: "Service temporarily unavailable. Please email me directly." };
   }
 
+  // TEMP DEBUG — remove after diagnosing the canvas.leads RLS 42501.
+  // Logs ONLY the project URL + the ref/role decoded from the key's JWT payload
+  // (or a short prefix if it's a non-JWT sb_* key). Never logs the secret.
+  try {
+    const parts = supabaseKey.split(".");
+    if (parts.length === 3) {
+      const claims = JSON.parse(
+        Buffer.from(parts[1], "base64url").toString("utf8")
+      ) as { ref?: string; role?: string };
+      console.log(
+        `[submitLead debug] url=${supabaseUrl} keyRef=${claims.ref} keyRole=${claims.role}`
+      );
+    } else {
+      console.log(
+        `[submitLead debug] key is NOT a JWT; prefix=${supabaseKey.slice(0, 12)} url=${supabaseUrl}`
+      );
+    }
+  } catch {
+    console.log(
+      `[submitLead debug] key is NOT a JWT; prefix=${supabaseKey.slice(0, 12)} url=${supabaseUrl}`
+    );
+  }
+  // END TEMP DEBUG
+
   const payload: Record<string, string> = { name, email, source: "portfolio_contact" };
   if (company) payload.company = company;
   if (role) payload.role = role;
