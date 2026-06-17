@@ -55,6 +55,13 @@ alter table canvas.leads
 -- =====================================================================
 -- 2. Row Level Security: insert-only for anon.
 --    Only run after section 0b/0c confirm it's safe (see warning above).
+--
+--    ⚠️ Run BOTH statements below together. Enabling RLS WITHOUT also creating
+--    the insert policy blocks every contact-form submission with:
+--      401 {"code":"42501","message":"new row violates row-level security
+--      policy for table \"leads\""}
+--    The same applies if you toggle "Enable RLS" in the Supabase dashboard —
+--    it enables RLS with zero policies. Always pair it with the policy below.
 -- =====================================================================
 alter table canvas.leads enable row level security;
 
