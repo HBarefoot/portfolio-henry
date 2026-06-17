@@ -110,10 +110,13 @@ export async function submitLead(_prev: LeadResult | null, form: FormData): Prom
   }
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  // Service role bypasses RLS. Safe here because this is a "use server" action —
+  // the key stays on the server and is never exposed to the browser. Do NOT add a
+  // NEXT_PUBLIC_ prefix and never reference this key from client code.
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    console.error("[submitLead] Missing SUPABASE_URL or SUPABASE_ANON_KEY");
+    console.error("[submitLead] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
     return { ok: false, error: "Service temporarily unavailable. Please email me directly." };
   }
 
