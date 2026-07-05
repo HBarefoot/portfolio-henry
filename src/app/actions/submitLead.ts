@@ -2,85 +2,36 @@
 
 import { headers } from "next/headers";
 import { checkRateLimit } from "../../lib/ratelimit";
+import { guardLead } from "../../lib/lead-guard";
 
 export type LeadResult =
   | { ok: true; id: string; source: string }
   | { ok: false; error: string };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const URL_RE = /https?:\/\//gi;
 
 // Field length caps — keep in sync with the Supabase CHECK constraints.
 const MAX = { name: 100, email: 200, company: 120, role: 120, message: 4000 } as const;
 
-// Minimum time a human plausibly takes to fill the form, and a sane upper bound.
-const MIN_FILL_MS = 3_000;
-const MAX_FILL_MS = 60 * 60 * 1000; // 1 hour
+const SOURCE = "portfolio_contact";
 
-const TURNSTILE_VERIFY_URL =
-  "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
-async function verifyTurnstile(token: string, ip: string | null): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  // Degrade gracefully when Turnstile isn't configured (local dev / previews).
-  if (!secret) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[submitLead] TURNSTILE_SECRET_KEY not set — skipping CAPTCHA check.");
-    }
-    return true;
-  }
-  if (!token) return false;
-
-  try {
-    const body = new URLSearchParams({ secret, response: token });
-    if (ip) body.set("remoteip", ip);
-
-    const res = await fetch(TURNSTILE_VERIFY_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body,
-    });
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
-  } catch (err) {
-    console.error("[submitLead] Turnstile verify error:", err);
-    return false;
-  }
+/**
+ * Fake success for bot detections: the bot believes it won and doesn't
+ * retry/adapt; nothing is saved. The guard already logged the reason + IP.
+ * (The client fires a PostHog lead_form_submit on success — the sentinel id
+ * makes those filterable, and bots posting the action directly never run
+ * client JS anyway.)
+ */
+function fakeSuccess(): LeadResult {
+  return { ok: true, id: "received", source: SOURCE };
 }
 
 export async function submitLead(_prev: LeadResult | null, form: FormData): Promise<LeadResult> {
-  // Layer: honeypot — bots fill this hidden field; humans never see it.
-  if (form.get("website")) {
-    return { ok: false, error: "Submission rejected." };
-  }
-
-  // Layer: timing — reject instant (bot) and absurdly stale submissions.
-  const ts = Number(form.get("ts"));
-  if (Number.isFinite(ts) && ts > 0) {
-    const elapsed = Date.now() - ts;
-    if (elapsed < MIN_FILL_MS || elapsed > MAX_FILL_MS) {
-      return { ok: false, error: "Submission rejected." };
-    }
-  }
-
-  // Resolve the client IP once (used for rate limiting + Turnstile remoteip).
   const hdrs = await headers();
   const ip =
     hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     hdrs.get("x-real-ip") ||
-    null;
-
-  // Layer: per-IP rate limit.
-  const { success } = await checkRateLimit(ip ?? "anonymous");
-  if (!success) {
-    return { ok: false, error: "Too many messages — please try again later or email me directly." };
-  }
-
-  // Layer: Cloudflare Turnstile.
-  const turnstileToken = (form.get("cf-turnstile-response") as string | null) ?? "";
-  if (!(await verifyTurnstile(turnstileToken, ip))) {
-    return { ok: false, error: "Verification failed — please reload and try again." };
-  }
+    "unknown";
 
   const name = (form.get("name") as string | null)?.trim() ?? "";
   const email = (form.get("email") as string | null)?.trim() ?? "";
@@ -88,6 +39,30 @@ export async function submitLead(_prev: LeadResult | null, form: FormData): Prom
   const role = (form.get("role") as string | null)?.trim() ?? "";
   const message = (form.get("message") as string | null)?.trim() ?? "";
 
+  // Shared anti-spam guard: honeypot → Turnstile → work-email policy →
+  // per-IP rate limit (Upstash) → content heuristics → time-trap.
+  const guard = await guardLead(
+    {
+      website: form.get("website"),
+      turnstileToken: form.get("cf-turnstile-response"),
+      email,
+      message,
+      startedAt: form.get("ts"),
+    },
+    {
+      route: "contact",
+      ip,
+      requireTurnstile: true,
+      rateLimit: (key) => checkRateLimit(key).then((r) => r.success),
+    }
+  );
+  if (!guard.ok) {
+    // Domain policy → a real error the visitor sees; everything else → fake success.
+    if (guard.kind === "reject") return { ok: false, error: guard.error };
+    return fakeSuccess();
+  }
+
+  // Real human-input problems get real errors.
   if (!name) return { ok: false, error: "Name is required." };
   if (!email) return { ok: false, error: "Email is required." };
   if (!EMAIL_RE.test(email)) return { ok: false, error: "Please enter a valid email address." };
@@ -103,12 +78,6 @@ export async function submitLead(_prev: LeadResult | null, form: FormData): Prom
     return { ok: false, error: "One of your fields is too long. Please shorten it." };
   }
 
-  // Layer: spam heuristic — link-stuffed messages.
-  const urlCount = (message.match(URL_RE) ?? []).length;
-  if (urlCount > 4) {
-    return { ok: false, error: "Submission rejected." };
-  }
-
   const supabaseUrl = process.env.SUPABASE_URL;
   // Service role bypasses RLS. Safe here because this is a "use server" action —
   // the key stays on the server and is never exposed to the browser. Do NOT add a
@@ -120,7 +89,7 @@ export async function submitLead(_prev: LeadResult | null, form: FormData): Prom
     return { ok: false, error: "Service temporarily unavailable. Please email me directly." };
   }
 
-  const payload: Record<string, string> = { name, email, source: "portfolio_contact" };
+  const payload: Record<string, string> = { name, email, source: SOURCE };
   if (company) payload.company = company;
   if (role) payload.role = role;
   if (message) payload.message = message;
@@ -149,7 +118,7 @@ export async function submitLead(_prev: LeadResult | null, form: FormData): Prom
 
     const rows = await res.json() as { id: string }[];
     const id = rows[0]?.id ?? "unknown";
-    return { ok: true, id, source: "portfolio_contact" };
+    return { ok: true, id, source: SOURCE };
   } catch (err) {
     console.error("[submitLead] Network error:", err);
     return { ok: false, error: "Network error — please email me directly." };
